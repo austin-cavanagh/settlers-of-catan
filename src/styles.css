@@ -1,0 +1,100 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #007fff;
+}
+
+/* window */
+.window {
+  --window-height: 98vh;
+  --window-width: 98vw;
+  --board-width: calc(var(--window-height) * 0.9);
+
+  display: flex;
+  height: var(--window-height);
+  width: var(--window-width);
+  justify-content: center;
+  align-items: center;
+}
+
+/* board */
+.board {
+  --row-height: calc(var(--board-width) * 0.18);
+  --road-height: calc(var(--row-height) * 0.61);
+  --road-width: calc(var(--row-height) * 0.1);
+
+  position: relative;
+  width: var(--board-width);
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* row */
+.row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--board-width);
+  height: var(--row-height);
+  border: none;
+}
+
+/* hexagon */
+.hexagon {
+  width: 17%;
+  padding-bottom: 22%; /* updated the padding to get a regular hexagon */
+  background-color: red;
+  position: relative;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  border: none;
+  overflow: visible;
+}
+
+/* road */
+
+/* rows that contains roads and settlements */
+.row-roads {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--board-width);
+  background-color: yellow;
+  padding-left: 72px;
+  margin-bottom: -44px;
+}
+
+.road {
+  position: relative;
+  width: var(--road-width);
+  height: var(--road-height);
+  background-color: black;
+  box-shadow: -1px 0 0 0 black, 1px 0 0 0 black;
+}
+
+.road-up-right {
+  position: relative;
+  width: var(--road-width);
+  height: calc(var(--road-height) * 0.9);
+  background-color: black;
+  box-shadow: -1px 0 0 0 black, 1px 0 0 0 black;
+  transform: rotate(57deg);
+  margin-right: 72px;
+  z-index: 1;
+}
+
+.road-down-right {
+  position: relative;
+  width: var(--road-width);
+  height: calc(var(--road-height) * 0.9);
+  background-color: black;
+  box-shadow: -1px 0 0 0 black, 1px 0 0 0 black;
+  transform: rotate(-56.5deg);
+  margin-right: 72px;
+}
