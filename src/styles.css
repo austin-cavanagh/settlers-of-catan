@@ -56,20 +56,3 @@ body {
   height: 0;
   width: 0;
 }
-
-.card2 {
-  height: 200px;
-  width: 200px;
-  background-position: center;
-  background-size: 99%;
-  background-repeat: no-repeat;
-  border-radius: 8px;
-  overflow: hidden;
-  color: white;
-  display: flex;
-  font-size: 20px;
-  justify-content: center;
-  align-items: center;
-  background-color: blue;
-  transition: transform 1s ease;
-}
