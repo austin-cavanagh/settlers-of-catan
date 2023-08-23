@@ -1,71 +1,764 @@
-// import { useState, useEffect } from "react"
+import blueBrick from "./cards/blue-player/blue-brick.jpg"
+import blueGold from "./cards/blue-player/blue-gold.jpg"
+import blueRoad from "./cards/blue-player/blue-road.jpg"
+import blueRock from "./cards/blue-player/blue-rock.jpg"
+import blueSettlement from "./cards/blue-player/blue-settlement.jpg"
+import blueSheep from "./cards/blue-player/blue-sheep.jpg"
+// import blueShield from "./cards/blue-player/blue-shield.jpg"
+import blueWheat from "./cards/blue-player/blue-wheat.jpg"
+import blueWood from "./cards/blue-player/blue-wood.jpg"
+
+// import redBrick from "./cards/red-player/red-brick.jpg" // right side
+// import redGold from "./cards/red-player/red-gold.jpg" // right side
+// import redRoad from "./cards/red-player/red-road.jpg"
+// import redRock from "./cards/red-player/red-rock.jpg"
+// import redSettlement from "./cards/red-player/red-settlement.jpg"
+// import redSheep from "./cards/red-player/red-sheep.jpg"
+// import redShield from "./cards/red-player/red-shield.jpg"
+// import redWheat from "./cards/red-player/red-wheat.jpg"
+// import redWood from "./cards/red-player/red-wood.jpg" // grainy
+
+// import feud from "./cards/question/feud.jpg"
+// import fraternalFeuds from "./cards/question/fraternal-feuds.jpg"
+// import invention from "./cards/question/invention.jpg"
+// import questionFront from "./cards/question/question-front.jpg"
+// import tradeShipRace from "./cards/question/trade-ships-race.jpg"
+// import travelingMerchant from "./cards/question/traveling-merchant.jpg"
+// import yearOfPlenty from "./cards/question/year-of-plenty.jpg"
+// import yule from "./cards/question/yule.jpg"
+
+// import brick1 from "./cards/region/brick-1.jpg"
+// import brick5 from "./cards/region/brick-5.jpg"
+// import gold2 from "./cards/region/gold-2.jpg"
+// import gold3 from "./cards/region/gold-3.jpg"
+// import regionFront from "./cards/region/region-front.jpg"
+// import rock2 from "./cards/region/rock-2.jpg"
+// import rock4 from "./cards/region/rock-4.jpg"
+// import sheep5 from "./cards/region/sheep-5.jpg"
+// import sheep6 from "./cards/region/sheep-6.jpg"
+// import wheat1 from "./cards/region/wheat-1.jpg"
+// import wheat3 from "./cards/region/wheat-3.jpg"
+// import wood4 from "./cards/region/wood-4.jpg"
+// import wood6 from "./cards/region/wood-6.jpg"
+
+// import abby from "./Cards/basic-set/abby.jpg"
+// import austin from "./Cards/basic-set/austin.jpg"
+// import basicFront from "./Cards/basic-set/basic-front.jpg"
+// import brickFactory from "./Cards/basic-set/brick-factory.jpg"
+// import brickShip from "./Cards/basic-set/brick-ship.jpg"
+// import brigitta from "./Cards/basic-set/brigitta.jpg"
+// import candamir from "./Cards/basic-set/candamir.jpg"
+// import goldShip from "./Cards/basic-set/gold-ship.jpg"
+// import goldSmith from "./Cards/basic-set/goldsmith.jpg"
+// import grainMill from "./Cards/basic-set/grain-mill.jpg"
+// import grainShip from "./Cards/basic-set/grain-ship.jpg"
+// import harald from "./Cards/basic-set/harald.jpg"
+// import inga from "./Cards/basic-set/inga.jpg"
+// import ironFoundry from "./Cards/basic-set/iron-foundry.jpg"
+// import largeTradeShip from "./Cards/basic-set/large-trade-ship.jpg"
+// import lumberCamp from "./Cards/basic-set/lumber-camp.jpg"
+// import lumberShip from "./Cards/basic-set/lumber-ship.jpg"
+// import marketplace from "./Cards/basic-set/marketplace.jpg"
+// import merchantCaravan from "./Cards/basic-set/merchant-caravan.jpg"
+// import oreShip from "./Cards/basic-set/ore-ship.jpg"
+// import osmund from "./Cards/basic-set/osmund.jpg"
+// import parishHall from "./Cards/basic-set/parish-hall.jpg"
+// import relocation from "./Cards/basic-set/relocation.jpg"
+// import scout from "./Cards/basic-set/scout.jpg"
+// import siglind from "./Cards/basic-set/siglind.jpg"
+// import storehouse from "./Cards/basic-set/storehouse.jpg"
+// import tollBridge from "./Cards/basic-set/toll-bridge.jpg"
+// import weaversShop from "./Cards/basic-set/weavers-shop.jpg"
+// import woolShip from "./Cards/basic-set/wool-ship.jpg"
+
+// import cityBack from "./Cards/other/city-back.jpg"
+// import cityFront from "./Cards/other/city-front.jpg"
+// import roadBack from "./Cards/other/road-back.jpg"
+// import roadFront from "./Cards/other/road-front.jpg"
+// import settlementBack from "./Cards/other/settlement-back.jpg"
+// import settlementFront from "./Cards/other/settlement-front.jpg"
+
+interface CardDefinition {
+  type: string
+  display: string
+  resourceType: string
+  resources: number
+  diceNumber: number
+  index: number
+  image: string
+  buildingType: string
+  rotation: number
+}
+
+const defineCards: CardDefinition[] = [
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 0,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 1,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 2,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 3,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 4,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 5,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 6,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 7,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 8,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 9,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 10,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 11,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 12,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 13,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 14,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "yes",
+    resourceType: "lumber",
+    resources: 1,
+    diceNumber: 3,
+    index: 15,
+    image: blueWood,
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 16,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "yes",
+    resourceType: "gold",
+    resources: 0,
+    diceNumber: 4,
+    index: 17,
+    image: blueGold,
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 18,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "yes",
+    resourceType: "grain",
+    resources: 1,
+    diceNumber: 5,
+    index: 19,
+    image: blueWheat,
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 20,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 21,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 22,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "settlement",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 23,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "road",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 24,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "settlement",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 25,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "road",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 26,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "settlement",
+    display: "yes",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 27,
+    image: blueSettlement,
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "road",
+    display: "yes",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 28,
+    image: blueRoad,
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "settlement",
+    display: "yes",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 29,
+    image: blueSettlement,
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "road",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 30,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "settlement",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 31,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 32,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 33,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 34,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 35,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 36,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "yes",
+    resourceType: "brick",
+    resources: 1,
+    diceNumber: 2,
+    index: 37,
+    image: blueBrick,
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 38,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "yes",
+    resourceType: "wool",
+    resources: 1,
+    diceNumber: 1,
+    index: 39,
+    image: blueSheep,
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 40,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "yes",
+    resourceType: "ore",
+    resources: 1,
+    diceNumber: 6,
+    index: 41,
+    image: blueRock,
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 42,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "region",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 43,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 44,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 45,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 46,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 47,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 48,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 49,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 50,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 51,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 52,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "build",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 53,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+  {
+    type: "none",
+    display: "no",
+    resourceType: "",
+    resources: 0,
+    diceNumber: 0,
+    index: 54,
+    image: "",
+    buildingType: "",
+    rotation: 0,
+  },
+]
+
+import { useState } from "react"
 
 function App() {
+  const [cards, setCards] = useState(defineCards)
+
+  function addResource(card: CardDefinition) {
+    setCards(cards => {
+      return cards.map(currCard => {
+        if (card === currCard) {
+          return { ...currCard, rotation: currCard.rotation - 90 }
+        }
+        return currCard
+      })
+    })
+  }
+
   return (
     <>
       <div className="window">
-        <div className="board">
-          <div className="row-roads">
-            <div className="road-up-right"></div>
-            <div className="road-down-right"></div>
-            <div className="road-up-right"></div>
-            <div className="road-down-right"></div>{" "}
-            <div className="road-up-right"></div>
-            <div className="road-down-right"></div>
-          </div>
-          <div className="row">
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-          </div>
-          <div className="row">
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-          </div>
-          <div className="row">
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-          </div>
-          <div className="row">
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-          </div>
-          <div className="row">
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-            <div className="hexagon"></div>
-            <div className="road"></div>
-          </div>
+        {/* <div
+          className="card2"
+          onClick={addResource}
+          style={{ transform: `rotate(${rotation}deg)` }}
+        ></div> */}
+
+        <div className="board rotate">
+          {cards.map((card: CardDefinition, index: number) => {
+            // if (card.display === "no") {
+            //   return (
+            //     <div className="card" key={index}>
+            //       {` ${card.index} ${card.type}`}
+            //     </div>
+            //   )
+            // }
+
+            if (card.type === "region") {
+              return (
+                <div
+                  className="card"
+                  key={index}
+                  onClick={() => addResource(card)}
+                  style={{
+                    backgroundImage: `url(${card.image})`,
+                    transform: `rotate(${card.rotation}deg)`,
+                  }}
+                ></div>
+              )
+            }
+
+            return (
+              <div
+                className="card"
+                key={index}
+                style={{
+                  backgroundImage: `url(${card.image})`,
+                }}
+              >
+                {` ${card.index} ${card.type}`}
+              </div>
+            )
+          })}
         </div>
       </div>
     </>
