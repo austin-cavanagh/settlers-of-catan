@@ -78,9 +78,27 @@ import blueWood from "./cards/blue-player/blue-wood.jpg"
 // import settlementBack from "./Cards/other/settlement-back.jpg"
 // import settlementFront from "./Cards/other/settlement-front.jpg"
 
+// toDo
+// array for costs for each building
+// maybe seperate by types like red cards and building cards
+// array for region cards
+// region type and dice
+// simulated dice role
+// all event cards need logic built into them
+// seperate array for action cards?
+// victory point tracking
+// tracker to see who has the most commerce and strength points
+// auto shuffling for red and question cards
+
+// add
+// victory points
+// commerce points
+// strength points
+// progress points
+
 interface CardDefinition {
-  type: string
-  display: string
+  type: string // might remove, change to card name
+  display: string // might remove
   resourceType: string
   resourceCount: number
   diceNumber: number
@@ -90,9 +108,14 @@ interface CardDefinition {
   rotation: number
   minRotation: number
   maxRotation: number
+  commercePoints: number
+  strengthPoints: number
+  progressPoints: number
+  skillPoints: number
+  victoryPoints: number
 }
 
-const startingCards: CardDefinition[] = [
+const blueStartingCards: CardDefinition[] = [
   {
     type: "none",
     display: "no",
@@ -105,6 +128,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -118,6 +146,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -131,6 +164,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -144,6 +182,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -157,6 +200,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -170,6 +218,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -183,6 +236,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -196,6 +254,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -209,6 +272,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -222,6 +290,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -235,6 +308,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -248,6 +326,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -261,6 +344,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -274,6 +362,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -287,6 +380,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -300,6 +398,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 90,
     maxRotation: -180,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -313,6 +416,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -326,6 +434,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -339,6 +452,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -352,6 +470,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 90,
     maxRotation: -180,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -365,6 +488,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -378,6 +506,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -391,6 +524,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "settlement",
@@ -404,6 +542,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "road",
@@ -417,6 +560,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "settlement",
@@ -430,6 +578,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "road",
@@ -443,6 +596,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "settlement",
@@ -456,6 +614,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 1,
   },
   {
     type: "road",
@@ -469,6 +632,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "settlement",
@@ -482,6 +650,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 1,
   },
   {
     type: "road",
@@ -495,6 +668,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "settlement",
@@ -508,6 +686,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -521,6 +704,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -534,6 +722,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -547,6 +740,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -560,6 +758,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -573,6 +776,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -586,6 +794,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 90,
     maxRotation: -180,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -599,6 +812,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -612,6 +830,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 90,
     maxRotation: -180,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -625,6 +848,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -638,6 +866,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 90,
     maxRotation: -180,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -651,6 +884,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "region",
@@ -664,6 +902,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -677,6 +920,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -690,6 +938,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -703,6 +956,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -716,6 +974,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -729,6 +992,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -742,6 +1010,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -755,6 +1028,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -768,6 +1046,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -781,6 +1064,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "build",
@@ -794,6 +1082,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
   {
     type: "none",
@@ -807,6 +1100,11 @@ const startingCards: CardDefinition[] = [
     rotation: 0,
     minRotation: 0,
     maxRotation: -270,
+    commercePoints: 0,
+    strengthPoints: 0,
+    progressPoints: 0,
+    skillPoints: 0,
+    victoryPoints: 0,
   },
 ]
 
@@ -817,6 +1115,11 @@ interface ResourceTracker {
   brick: number
   wool: number
   ore: number
+  skillPoints: number
+  progressPoints: number
+  commercePoints: number
+  strengthPoints: number
+  victoryPoints: number
 }
 
 const startingResources: ResourceTracker = {
@@ -826,35 +1129,55 @@ const startingResources: ResourceTracker = {
   brick: 1,
   wool: 1,
   ore: 1,
+  skillPoints: 0,
+  progressPoints: 0,
+  commercePoints: 0,
+  strengthPoints: 0,
+  victoryPoints: 2,
 }
 
 import { useEffect, useState } from "react"
 // add resource points to the cards
 function App() {
-  const [cards, setCards] = useState<CardDefinition[]>(startingCards)
-  const [resources, setResourceTracker] =
+  const [blueCards, setCards] = useState<CardDefinition[]>(blueStartingCards)
+  const [blueResources, setBlueResources] =
     useState<ResourceTracker>(startingResources)
 
   useEffect(() => {
-    setResourceTracker(resources => {
-      const newResources: ResourceTracker = { ...resources }
+    setBlueResources(blueResources => {
+      const newResources: ResourceTracker = { ...blueResources }
 
-      Object.keys(resources).forEach(resourceKey => {
+      Object.keys(blueResources).forEach(resourceKey => {
         // typecast?
         const resource = resourceKey as keyof ResourceTracker
-        const newCount: number = cards.reduce((acc: number, currCard) => {
-          if (resource === currCard.resourceType) {
-            acc += currCard.resourceCount
-          }
-          return acc
-        }, 0)
-        newResources[resource] = newCount
+
+        // update victory, commerce, strength points
+        if (
+          resource === "victoryPoints" ||
+          resource === "commercePoints" ||
+          resource === "strengthPoints" ||
+          resource === "progressPoints" ||
+          resource === "skillPoints"
+        ) {
+          const newCount: number = blueCards.reduce((acc: number, currCard) => {
+            return acc + currCard[resource]
+          }, 0)
+          newResources[resource] = newCount
+        } else {
+          // update resource points
+          const newCount: number = blueCards.reduce((acc: number, currCard) => {
+            if (resource === currCard.resourceType) {
+              acc += currCard.resourceCount
+            }
+            return acc
+          }, 0)
+          newResources[resource] = newCount
+        }
       })
-      console.log(newResources)
 
       return newResources
     })
-  }, [cards])
+  }, [blueCards])
 
   function addResource(card: CardDefinition) {
     setCards(cards => {
@@ -878,7 +1201,7 @@ function App() {
           if (currCard.rotation === currCard.minRotation) {
             return card
           }
-
+          currCard.resourceCount--
           return { ...currCard, rotation: currCard.rotation + 90 }
         }
         return currCard
@@ -889,16 +1212,28 @@ function App() {
   return (
     <>
       <div className="window">
-        <div className="board rotate">
-          {cards.map((card: CardDefinition, index: number) => {
-            // if (card.display === "no") {
-            //   return (
-            //     <div className="card" key={index}>
-            //       {` ${card.index} ${card.type}`}
-            //     </div>
-            //   )
-            // }
+        <div className="statsBar">
+          <div className="resourceTracker">
+            <div className="resource">{`Brick: ${blueResources.brick}`}</div>
+            <div className="resource">{`Gold: ${blueResources.gold}`}</div>
+            <div className="resource">{`Grain: ${blueResources.grain}`}</div>
+            <div className="resource">{`Lumber: ${blueResources.lumber}`}</div>
+            <div className="resource">{`Ore: ${blueResources.ore}`}</div>
+            <div className="resource">{`Wool: ${blueResources.wool}`}</div>
+          </div>
+          <div className="resourceTracker">
+            <div className="resource">{`Victory Points: ${blueResources.victoryPoints}`}</div>
+            <div className="resource">{`Commerce Points: ${blueResources.commercePoints}`}</div>
+            <div className="resource">{`Strength Points: ${blueResources.strengthPoints}`}</div>
+          </div>
+          <div className="resourceTracker">
+            <div className="resource">{`Progress Points: ${blueResources.progressPoints}`}</div>
+            <div className="resource">{`Skill Points: ${blueResources.skillPoints}`}</div>
+          </div>
+        </div>
 
+        <div className="board rotate">
+          {blueCards.map((card: CardDefinition, index: number) => {
             if (card.type === "region") {
               return (
                 <div
