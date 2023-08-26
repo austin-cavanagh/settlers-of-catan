@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react"
+
 import blueBrick from "./cards/blue-player/blue-brick.jpg"
 import blueGold from "./cards/blue-player/blue-gold.jpg"
 import blueRoad from "./cards/blue-player/blue-road.jpg"
@@ -90,11 +92,7 @@ import blueWood from "./cards/blue-player/blue-wood.jpg"
 // tracker to see who has the most commerce and strength points
 // auto shuffling for red and question cards
 
-// add
-// victory points
-// commerce points
-// strength points
-// progress points
+import { centerCards, CenterCard } from "./centerCards.tsx"
 
 interface CardDefinition {
   type: string // might remove, change to card name
@@ -1136,12 +1134,29 @@ const startingResources: ResourceTracker = {
   victoryPoints: 2,
 }
 
-import { useEffect, useState } from "react"
-// add resource points to the cards
+interface OpenExpandTiles {
+  left: OpenSpotsObject
+  right: OpenSpotsObject
+}
+
+interface OpenSpotsObject {
+  building: string
+  index: number
+}
+
+const startingOpenExpandTiles: OpenExpandTiles = {
+  left: { building: "road", index: 26 },
+  right: { building: "road", index: 30 },
+}
+
 function App() {
   const [blueCards, setCards] = useState<CardDefinition[]>(blueStartingCards)
   const [blueResources, setBlueResources] =
     useState<ResourceTracker>(startingResources)
+  const [blueOpenExpandTiles, setBlueOpenExpandTiles] =
+    useState<OpenExpandTiles>(startingOpenExpandTiles)
+
+  const [colors, setColors] = useState<string[]>(new Array(55).fill("blue"))
 
   useEffect(() => {
     setBlueResources(blueResources => {
@@ -1177,6 +1192,37 @@ function App() {
 
       return newResources
     })
+
+    setBlueOpenExpandTiles(blueOpenExpandTiles => {
+      const { left: leftTile, right: rightTile } = blueOpenExpandTiles
+      let leftBuilding = leftTile.building
+      let leftIndex = leftTile.index
+      let rightBuilding = rightTile.building
+      let rightIndex = rightTile.index
+
+      // left side
+      if (blueCards[leftIndex].image !== "" && leftIndex > 22) {
+        leftIndex--
+        leftBuilding = leftBuilding === "road" ? "settlement" : "road"
+      }
+
+      // right side
+      if (blueCards[rightIndex].image !== "" && rightIndex < 32) {
+        rightIndex++
+        rightBuilding = rightBuilding === "road" ? "settlement" : "road"
+      }
+
+      // if index is 22 or 32 set building to none
+      if (leftIndex <= 22) leftBuilding = "none"
+      if (rightIndex >= 32) rightBuilding = "none"
+
+      blueOpenExpandTiles.left.building = leftBuilding
+      blueOpenExpandTiles.left.index = leftIndex
+      blueOpenExpandTiles.right.building = rightBuilding
+      blueOpenExpandTiles.right.index = rightIndex
+
+      return blueOpenExpandTiles
+    })
   }, [blueCards])
 
   function addResource(card: CardDefinition) {
@@ -1209,6 +1255,48 @@ function App() {
     })
   }
 
+  function selectedCenterCard(stack: CenterCard) {
+    const building = stack.cardStack
+    const cards = stack.cardsInStack
+
+    if (
+      blueOpenExpandTiles.left.building !== building &&
+      blueOpenExpandTiles.right.building !== building
+    ) {
+      console.log("Not Enough Resources")
+      return
+    }
+
+    const newColors = [...colors]
+    if (building === blueOpenExpandTiles.left.building) {
+      newColors[blueOpenExpandTiles.left.index] = "green"
+    }
+    if (building === blueOpenExpandTiles.right.building) {
+      newColors[blueOpenExpandTiles.right.index] = "green"
+    }
+
+    setColors(newColors)
+  }
+
+  function buildCard(index: number) {
+    setColors(colors.map(() => "blue"))
+
+    setCards(
+      blueCards.map((card, currIndex) => {
+        if (index === currIndex) {
+          return {
+            ...card,
+            dispay: "yes",
+            image: blueRoad,
+            buildingType: "road",
+          }
+        }
+
+        return card
+      })
+    )
+  }
+
   return (
     <>
       <div className="window">
@@ -1232,6 +1320,19 @@ function App() {
           </div>
         </div>
 
+        <div className="centerCards">
+          {centerCards.map((stack, index) => {
+            return (
+              <div
+                className="card noBackground"
+                key={index}
+                style={{ backgroundImage: `url(${stack.image})` }}
+                onClick={() => selectedCenterCard(stack)}
+              ></div>
+            )
+          })}
+        </div>
+
         <div className="board rotate">
           {blueCards.map((card: CardDefinition, index: number) => {
             if (card.type === "region") {
@@ -1252,8 +1353,10 @@ function App() {
               <div
                 className="card"
                 key={index}
+                onClick={() => buildCard(index)}
                 style={{
                   backgroundImage: `url(${card.image})`,
+                  backgroundColor: colors[index],
                 }}
               >
                 {` ${card.index} ${card.type}`}

@@ -35,6 +35,25 @@ body {
   gap: 6px;
 }
 
+/* center cards */
+.centerCards {
+  height: 100px;
+  width: 900px;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(1, 1fr);
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 30px;
+  cursor: grab;
+}
+
+.centerCards:active {
+  cursor: grabbing;
+}
+
 /* card */
 .card {
   height: 100%;
@@ -51,6 +70,10 @@ body {
   align-items: center;
   background-color: blue;
   transition: transform 1s ease;
+}
+
+.noBackground {
+  background-color: transparent;
 }
 
 .hide {
