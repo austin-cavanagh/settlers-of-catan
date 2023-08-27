@@ -54,6 +54,21 @@ body {
   cursor: grabbing;
 }
 
+/* player hand */
+.player-hand {
+  height: 100px;
+  width: 300px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(1, 1fr);
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 30px;
+  cursor: grab;
+}
+
 /* card */
 .card {
   height: 100%;

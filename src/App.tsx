@@ -22,45 +22,6 @@ import blueWood from "./cards/blue-player/blue-wood.jpg"
 // import redWheat from "./cards/red-player/red-wheat.jpg"
 // import redWood from "./cards/red-player/red-wood.jpg" // grainy
 
-// import feud from "./cards/question/feud.jpg"
-// import fraternalFeuds from "./cards/question/fraternal-feuds.jpg"
-// import invention from "./cards/question/invention.jpg"
-// import questionFront from "./cards/question/question-front.jpg"
-// import tradeShipRace from "./cards/question/trade-ships-race.jpg"
-// import travelingMerchant from "./cards/question/traveling-merchant.jpg"
-// import yearOfPlenty from "./cards/question/year-of-plenty.jpg"
-// import yule from "./cards/question/yule.jpg"
-
-// import abby from "./Cards/basic-set/abby.jpg"
-// import austin from "./Cards/basic-set/austin.jpg"
-// import basicFront from "./Cards/basic-set/basic-front.jpg"
-// import brickFactory from "./Cards/basic-set/brick-factory.jpg"
-// import brickShip from "./Cards/basic-set/brick-ship.jpg"
-// import brigitta from "./Cards/basic-set/brigitta.jpg"
-// import candamir from "./Cards/basic-set/candamir.jpg"
-// import goldShip from "./Cards/basic-set/gold-ship.jpg"
-// import goldSmith from "./Cards/basic-set/goldsmith.jpg"
-// import grainMill from "./Cards/basic-set/grain-mill.jpg"
-// import grainShip from "./Cards/basic-set/grain-ship.jpg"
-// import harald from "./Cards/basic-set/harald.jpg"
-// import inga from "./Cards/basic-set/inga.jpg"
-// import ironFoundry from "./Cards/basic-set/iron-foundry.jpg"
-// import largeTradeShip from "./Cards/basic-set/large-trade-ship.jpg"
-// import lumberCamp from "./Cards/basic-set/lumber-camp.jpg"
-// import lumberShip from "./Cards/basic-set/lumber-ship.jpg"
-// import marketplace from "./Cards/basic-set/marketplace.jpg"
-// import merchantCaravan from "./Cards/basic-set/merchant-caravan.jpg"
-// import oreShip from "./Cards/basic-set/ore-ship.jpg"
-// import osmund from "./Cards/basic-set/osmund.jpg"
-// import parishHall from "./Cards/basic-set/parish-hall.jpg"
-// import relocation from "./Cards/basic-set/relocation.jpg"
-// import scout from "./Cards/basic-set/scout.jpg"
-// import siglind from "./Cards/basic-set/siglind.jpg"
-// import storehouse from "./Cards/basic-set/storehouse.jpg"
-// import tollBridge from "./Cards/basic-set/toll-bridge.jpg"
-// import weaversShop from "./Cards/basic-set/weavers-shop.jpg"
-// import woolShip from "./Cards/basic-set/wool-ship.jpg"
-
 // import cityBack from "./Cards/other/city-back.jpg"
 // import cityFront from "./Cards/other/city-front.jpg"
 // import roadBack from "./Cards/other/road-back.jpg"
@@ -1192,12 +1153,10 @@ function App() {
   )
   // tracking settlements to turn into cities
   const [blueSettlements, setBlueSettlements] = useState<number[]>([27, 29])
-
   // variable that tells me if I am building
   // store which card I clicked to build - I think the card already checks if i can build it
   // and which tiles I can actually click on that are valid places to go
   const [buildMode, setBuildMode] = useState(startBuildMode)
-
   // region card stack and building regions
   const [regionCards, setRegionCards] = useState<RegionCard[]>(startRegionCards)
   const [buildRegion, setBuildRegion] = useState(startBuildRegion)
@@ -1463,7 +1422,7 @@ function App() {
   }
 
   // places region cards on the board
-  function placeRegion(index: number) {
+  function placeRegion(clickIndex: number) {
     const newColors = new Array(55).fill("transparent")
 
     // will run the function run 2 times, 1 for each placement
@@ -1473,7 +1432,7 @@ function App() {
       let index: number | undefined
 
       const remainingSpot: number[] = []
-      if (buildRegion.buildSpots[1] === index) {
+      if (buildRegion.buildSpots[1] === clickIndex) {
         remainingSpot.push(buildRegion.buildSpots[0])
         newColors[buildRegion.buildSpots[0]] = "green"
         index = buildRegion.buildSpots[1]
@@ -1509,6 +1468,8 @@ function App() {
     }
 
     if (buildRegion.buildSpots.length === 1) {
+      const index = buildRegion.buildSpots[0]
+
       setBuildRegion(buildRegion => {
         buildRegion.active = false
         buildRegion.buildSpots = []
@@ -1536,11 +1497,23 @@ function App() {
     setColors(newColors)
   }
 
-  console.log(buildRegion)
-
   return (
     <>
       <div className="window">
+        <div className="player-hand">
+          <div
+            className="card"
+            style={{ backgroundImage: `url(${blueGold})` }}
+          ></div>
+          <div
+            className="card"
+            style={{ backgroundImage: `url(${blueGold})` }}
+          ></div>
+          <div
+            className="card"
+            style={{ backgroundImage: `url(${blueGold})` }}
+          ></div>
+        </div>
         <div className="statsBar">
           <div className="resourceTracker">
             <div className="resource">{`Brick: ${blueResources.brick}`}</div>
