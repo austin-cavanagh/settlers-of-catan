@@ -31,20 +31,6 @@ import blueWood from "./cards/blue-player/blue-wood.jpg"
 // import yearOfPlenty from "./cards/question/year-of-plenty.jpg"
 // import yule from "./cards/question/yule.jpg"
 
-// import brick1 from "./cards/region/brick-1.jpg"
-// import brick5 from "./cards/region/brick-5.jpg"
-// import gold2 from "./cards/region/gold-2.jpg"
-// import gold3 from "./cards/region/gold-3.jpg"
-// import regionFront from "./cards/region/region-front.jpg"
-// import rock2 from "./cards/region/rock-2.jpg"
-// import rock4 from "./cards/region/rock-4.jpg"
-// import sheep5 from "./cards/region/sheep-5.jpg"
-// import sheep6 from "./cards/region/sheep-6.jpg"
-// import wheat1 from "./cards/region/wheat-1.jpg"
-// import wheat3 from "./cards/region/wheat-3.jpg"
-// import wood4 from "./cards/region/wood-4.jpg"
-// import wood6 from "./cards/region/wood-6.jpg"
-
 // import abby from "./Cards/basic-set/abby.jpg"
 // import austin from "./Cards/basic-set/austin.jpg"
 // import basicFront from "./Cards/basic-set/basic-front.jpg"
@@ -94,16 +80,21 @@ import blueWood from "./cards/blue-player/blue-wood.jpg"
 // tracker to see who has the most commerce and strength points
 // auto shuffling for red and question cards
 
-import { centerCards, CenterCard } from "./centerCards.tsx"
+import {
+  centerCards,
+  CenterCard,
+  RegionCard,
+  startRegionCards,
+} from "./centerCards.tsx"
 
 interface CardDefinition {
   type: string // might remove, change to card name
   display: string // might remove
-  resourceType: string
+  resourceType: string | undefined
   resourceCount: number
-  diceNumber: number
+  diceNumber: number | undefined
   index: number
-  image: string
+  image: string | undefined
   buildingType: string
   rotation: number
   minRotation: number
@@ -1167,8 +1158,31 @@ const startBuildMode: BuildMode = {
   image: "",
 }
 
+interface BuildRegion {
+  active: boolean
+  buildSpots: number[]
+  resourceType1: string | undefined
+  diceNumber1: number | undefined
+  image1: string | undefined
+  resourceType2: string | undefined
+  diceNumber2: number | undefined
+  image2: string | undefined
+}
+
+const startBuildRegion: BuildRegion = {
+  active: false,
+  buildSpots: [],
+  resourceType1: "",
+  diceNumber1: 0,
+  image1: "",
+  resourceType2: "",
+  diceNumber2: 0,
+  image2: "",
+}
+
 function App() {
-  const [blueCards, setCards] = useState<CardDefinition[]>(blueStartingCards)
+  const [blueCards, setBlueCards] =
+    useState<CardDefinition[]>(blueStartingCards)
   const [blueResources, setBlueResources] =
     useState<ResourceTracker>(startingResources)
   const [blueOpenExpandTiles, setBlueOpenExpandTiles] =
@@ -1183,6 +1197,10 @@ function App() {
   // store which card I clicked to build - I think the card already checks if i can build it
   // and which tiles I can actually click on that are valid places to go
   const [buildMode, setBuildMode] = useState(startBuildMode)
+
+  // region card stack and building regions
+  const [regionCards, setRegionCards] = useState<RegionCard[]>(startRegionCards)
+  const [buildRegion, setBuildRegion] = useState(startBuildRegion)
 
   useEffect(() => {
     setBlueResources(blueResources => {
@@ -1260,7 +1278,7 @@ function App() {
   }, [blueCards])
 
   function addResource(card: CardDefinition) {
-    setCards(cards => {
+    setBlueCards(cards => {
       return cards.map(currCard => {
         if (card === currCard) {
           if (currCard.rotation === currCard.maxRotation) {
@@ -1275,7 +1293,7 @@ function App() {
   }
 
   function payResource(card: CardDefinition) {
-    setCards(cards => {
+    setBlueCards(cards => {
       return cards.map(currCard => {
         if (card === currCard) {
           if (currCard.rotation === currCard.minRotation) {
@@ -1292,6 +1310,8 @@ function App() {
   function selectedCenterCard(stack: CenterCard) {
     const building = stack.cardStack
     const cards = stack.cardsInStack
+    // create new color array and set all colors to transparent
+    const newColors = new Array(55).fill("transparent")
 
     // if stack is a road
     if (
@@ -1301,7 +1321,6 @@ function App() {
     ) {
       // highlighting possible moves and tracking which tiles
       const possibleMoves: number[] = []
-      const newColors = [...colors]
       if (building === blueOpenExpandTiles.left.building) {
         newColors[blueOpenExpandTiles.left.index] = "green"
         possibleMoves.push(blueOpenExpandTiles.left.index)
@@ -1310,7 +1329,6 @@ function App() {
         newColors[blueOpenExpandTiles.right.index] = "green"
         possibleMoves.push(blueOpenExpandTiles.right.index)
       }
-      setColors(newColors)
       setBuildMode(buildMode => {
         buildMode.active = true
         buildMode.buildingType = building
@@ -1329,7 +1347,6 @@ function App() {
     ) {
       // highlighting possible moves and tracking which tiles
       const possibleMoves: number[] = []
-      const newColors = [...colors]
       if (building === blueOpenExpandTiles.left.building) {
         newColors[blueOpenExpandTiles.left.index] = "green"
         possibleMoves.push(blueOpenExpandTiles.left.index)
@@ -1338,7 +1355,6 @@ function App() {
         newColors[blueOpenExpandTiles.right.index] = "green"
         possibleMoves.push(blueOpenExpandTiles.right.index)
       }
-      setColors(newColors)
       setBuildMode(buildMode => {
         buildMode.active = true
         buildMode.buildingType = building
@@ -1352,11 +1368,9 @@ function App() {
     // if stack is a city
     if (building === "city" && blueSettlements.length !== 0) {
       const possibleMoves: number[] = blueSettlements
-      const newColors = [...colors]
       possibleMoves.forEach(move => {
         newColors[move] = "green"
       })
-      setColors(newColors)
       setBuildMode(buildMode => {
         buildMode.active = true
         buildMode.buildingType = building
@@ -1367,16 +1381,16 @@ function App() {
       })
     }
 
-    console.log("Not Enough Resources")
+    setColors(newColors)
   }
 
   function buildCard(index: number) {
     // reset colors back to default
-    setColors(colors.map(() => "transparent"))
+    const newColors = new Array(55).fill("transparent")
 
     // if the index is included in possible moves change card
     if (buildMode.possibleMoves.includes(index)) {
-      setCards(
+      setBlueCards(
         blueCards.map((card, currIndex) => {
           // if we find the card update it
           if (index === currIndex) {
@@ -1392,6 +1406,46 @@ function App() {
           return card
         })
       )
+
+      // if building settlement we must also place 2 region cards
+      if (buildMode.buildingType === "settlement") {
+        // get 2 regions from top of region card stack
+        let regionCard1: RegionCard | undefined
+        let regionCard2: RegionCard | undefined
+        setRegionCards(regionCards => {
+          regionCard1 = regionCards.shift()
+          regionCard2 = regionCards.shift()
+          return regionCards
+        })
+
+        // check if regions go on left or right
+        let direction = blueCards[index - 2].display === "no" ? "left" : "right"
+        let moves: number[] = []
+        if (direction === "left") {
+          moves.push(index - 12)
+          moves.push(index + 10)
+        }
+        if (direction === "right") {
+          moves.push(index - 10)
+          moves.push(index + 12)
+        }
+
+        // update colors of regions we want to build
+        newColors[moves[0]] = "green"
+        newColors[moves[1]] = "green"
+
+        setBuildRegion(buildRegion => {
+          buildRegion.active = true
+          buildRegion.buildSpots = moves
+          buildRegion.resourceType1 = regionCard1?.resourceType
+          buildRegion.diceNumber1 = regionCard1?.diceNumber
+          buildRegion.image1 = regionCard1?.image
+          buildRegion.resourceType2 = regionCard2?.resourceType
+          buildRegion.diceNumber2 = regionCard2?.diceNumber
+          buildRegion.image2 = regionCard2?.image
+          return buildRegion
+        })
+      }
     }
 
     // turn off build mode and reset variables
@@ -1403,9 +1457,86 @@ function App() {
       buildMode.image = ""
       return buildMode
     })
+
+    // set colors
+    setColors(newColors)
   }
 
-  console.log(buildMode)
+  // places region cards on the board
+  function placeRegion(index: number) {
+    const newColors = new Array(55).fill("transparent")
+
+    // will run the function run 2 times, 1 for each placement
+    // so if there are 2 spots this is the first run
+    if (buildRegion.buildSpots.length === 2) {
+      // determine which index is being built this run
+      let index: number | undefined
+
+      const remainingSpot: number[] = []
+      if (buildRegion.buildSpots[1] === index) {
+        remainingSpot.push(buildRegion.buildSpots[0])
+        newColors[buildRegion.buildSpots[0]] = "green"
+        index = buildRegion.buildSpots[1]
+      } else {
+        remainingSpot.push(buildRegion.buildSpots[1])
+        newColors[buildRegion.buildSpots[1]] = "green"
+        index = buildRegion.buildSpots[0]
+      }
+
+      // update cards for first region
+      setBlueCards(
+        blueCards.map((card, currIndex) => {
+          if (index === currIndex) {
+            card.buildingType = "region"
+            card.resourceType = buildRegion.resourceType1
+            card.diceNumber = buildRegion.diceNumber1
+            card.image = buildRegion.image1
+          }
+
+          return card
+        })
+      )
+
+      // clearing information for spot 1
+      setBuildRegion(buildRegion => {
+        buildRegion.active = true
+        buildRegion.buildSpots = remainingSpot
+        buildRegion.resourceType1 = ""
+        buildRegion.diceNumber1 = 0
+        buildRegion.image1 = ""
+        return buildRegion
+      })
+    }
+
+    if (buildRegion.buildSpots.length === 1) {
+      setBuildRegion(buildRegion => {
+        buildRegion.active = false
+        buildRegion.buildSpots = []
+        buildRegion.resourceType2 = ""
+        buildRegion.diceNumber2 = 0
+        buildRegion.image2 = ""
+        return buildRegion
+      })
+
+      // update cards for second region
+      setBlueCards(
+        blueCards.map((card, currIndex) => {
+          if (index === currIndex) {
+            card.buildingType = "region"
+            card.resourceType = buildRegion.resourceType2
+            card.diceNumber = buildRegion.diceNumber2
+            card.image = buildRegion.image2
+          }
+
+          return card
+        })
+      )
+    }
+
+    setColors(newColors)
+  }
+
+  console.log(buildRegion)
 
   return (
     <>
@@ -1437,7 +1568,9 @@ function App() {
                 className="card noBackground"
                 key={index}
                 style={{ backgroundImage: `url(${stack.image})` }}
-                onClick={() => selectedCenterCard(stack)}
+                onClick={() => {
+                  if (!buildRegion.active) selectedCenterCard(stack)
+                }}
               ></div>
             )
           })}
@@ -1450,10 +1583,13 @@ function App() {
                 <div
                   className="card"
                   key={index}
-                  onClick={() => addResource(card)}
+                  onClick={() => {
+                    if (buildRegion.active) placeRegion(index)
+                  }}
                   style={{
                     backgroundImage: `url(${card.image})`,
                     transform: `rotate(${card.rotation}deg)`,
+                    outline: `5px solid ${colors[index]}`,
                   }}
                 ></div>
               )
