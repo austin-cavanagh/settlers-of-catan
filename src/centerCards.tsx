@@ -462,14 +462,114 @@ const allBasicCards: CardStats[] = [
     resource: "",
     image: abby,
   },
+  {
+    cardName: "abby",
+    lumber: 0,
+    brick: 1,
+    grain: 1,
+    wool: 0,
+    ore: 1,
+    gold: 0,
+    strengthPoints: 0,
+    skillPoints: 0,
+    commercePoints: 0,
+    progressPoints: 1,
+    resourceBoost: false,
+    resource: "",
+    image: abby,
+  },
+  {
+    cardName: "weaversShop",
+    lumber: 1,
+    brick: 0,
+    grain: 0,
+    wool: 1,
+    ore: 0,
+    gold: 0,
+    strengthPoints: 0,
+    skillPoints: 0,
+    commercePoints: 0,
+    progressPoints: 0,
+    resourceBoost: true,
+    resource: "wool",
+    image: weaversShop,
+  },
+  {
+    cardName: "brickFactory",
+    lumber: 0,
+    brick: 1,
+    grain: 0,
+    wool: 0,
+    ore: 1,
+    gold: 0,
+    strengthPoints: 0,
+    skillPoints: 0,
+    commercePoints: 0,
+    progressPoints: 0,
+    resourceBoost: true,
+    resource: "brick",
+    image: brickFactory,
+  },
+  {
+    cardName: "lumberCamp",
+    lumber: 1,
+    brick: 0,
+    grain: 0,
+    wool: 0,
+    ore: 1,
+    gold: 0,
+    strengthPoints: 0,
+    skillPoints: 0,
+    commercePoints: 0,
+    progressPoints: 0,
+    resourceBoost: true,
+    resource: "lumber",
+    image: lumberCamp,
+  },
+  {
+    cardName: "ironFoundry",
+    lumber: 0,
+    brick: 1,
+    grain: 0,
+    wool: 0,
+    ore: 1,
+    gold: 0,
+    strengthPoints: 0,
+    skillPoints: 0,
+    commercePoints: 0,
+    progressPoints: 0,
+    resourceBoost: true,
+    resource: "ore",
+    image: ironFoundry,
+  },
+  {
+    cardName: "grainMill",
+    lumber: 1,
+    brick: 0,
+    grain: 1,
+    wool: 0,
+    ore: 0,
+    gold: 0,
+    strengthPoints: 0,
+    skillPoints: 0,
+    commercePoints: 0,
+    progressPoints: 0,
+    resourceBoost: true,
+    resource: "grain",
+    image: grainMill,
+  },
 ]
+
 // shuffeling basic cards
 const shuffledBasicCards = shuffle(allBasicCards)
 // seperating basic cards into 4 arrays
 const basic1 = shuffledBasicCards.slice(0, 5)
 const basic2 = shuffledBasicCards.slice(5, 10)
 const basic3 = shuffledBasicCards.slice(10, 15)
-const basic4 = shuffledBasicCards.slice(10, 20)
+const basic4 = shuffledBasicCards.slice(15, 20)
+// assigning starting player cards
+export const blueStartHand = shuffledBasicCards.slice(20, 23)
+export const redStartHand = shuffledBasicCards.slice(23, 26)
 
 // question cards before shuffle
 const unshuffledQuestionCards: CardStats[] = [
@@ -670,7 +770,7 @@ const unshuffledQuestionCards: CardStats[] = [
 const questionCards = shuffle(unshuffledQuestionCards)
 
 // all center cards
-export const centerCards: CenterCard[] = [
+export const startCenterCards: CenterCard[] = [
   {
     cardStack: "basic-1",
     cardsInStack: basic1,
@@ -799,7 +899,7 @@ const unshuffledRegionCards: RegionCard[] = [
     image: gold3,
   },
 ]
-export const startRegionCards = shuffleRegion(unshuffledRegionCards)
+export const startRegionCards = shuffleRegions(unshuffledRegionCards)
 
 // function to randomly shuffle the decks
 function shuffle(array: CardStats[]) {
@@ -810,7 +910,7 @@ function shuffle(array: CardStats[]) {
   return array
 }
 
-function shuffleRegion(array: RegionCard[]) {
+function shuffleRegions(array: RegionCard[]) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
     ;[array[i], array[j]] = [array[j], array[i]] // swap elements

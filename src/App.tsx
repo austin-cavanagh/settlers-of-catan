@@ -1,1064 +1,23 @@
 import { useEffect, useState } from "react"
 
 import city from "./Cards/other/city-back.jpg"
-
-import blueBrick from "./cards/blue-player/blue-brick.jpg"
-import blueGold from "./cards/blue-player/blue-gold.jpg"
 import blueRoad from "./cards/blue-player/blue-road.jpg"
-import blueRock from "./cards/blue-player/blue-rock.jpg"
 import blueSettlement from "./cards/blue-player/blue-settlement.jpg"
-import blueSheep from "./cards/blue-player/blue-sheep.jpg"
-// import blueShield from "./cards/blue-player/blue-shield.jpg"
-import blueWheat from "./cards/blue-player/blue-wheat.jpg"
-import blueWood from "./cards/blue-player/blue-wood.jpg"
-
-// import redBrick from "./cards/red-player/red-brick.jpg" // right side
-// import redGold from "./cards/red-player/red-gold.jpg" // right side
-// import redRoad from "./cards/red-player/red-road.jpg"
-// import redRock from "./cards/red-player/red-rock.jpg"
-// import redSettlement from "./cards/red-player/red-settlement.jpg"
-// import redSheep from "./cards/red-player/red-sheep.jpg"
-// import redShield from "./cards/red-player/red-shield.jpg"
-// import redWheat from "./cards/red-player/red-wheat.jpg"
-// import redWood from "./cards/red-player/red-wood.jpg" // grainy
-
-// import cityBack from "./Cards/other/city-back.jpg"
-// import cityFront from "./Cards/other/city-front.jpg"
-// import roadBack from "./Cards/other/road-back.jpg"
-// import roadFront from "./Cards/other/road-front.jpg"
-// import settlementBack from "./Cards/other/settlement-back.jpg"
-// import settlementFront from "./Cards/other/settlement-front.jpg"
-
-// toDo
-// array for costs for each building
-// maybe seperate by types like red cards and building cards
-// array for region cards
-// region type and dice
-// simulated dice role
-// all event cards need logic built into them
-// seperate array for action cards?
-// victory point tracking
-// tracker to see who has the most commerce and strength points
-// auto shuffling for red and question cards
 
 import {
-  centerCards,
+  startCenterCards,
   CenterCard,
   RegionCard,
   startRegionCards,
+  blueStartHand,
+  redStartHand,
 } from "./centerCards.tsx"
 
-interface CardDefinition {
-  type: string // might remove, change to card name
-  display: string // might remove
-  resourceType: string | undefined
-  resourceCount: number
-  diceNumber: number | undefined
-  index: number
-  image: string | undefined
-  buildingType: string
-  rotation: number
-  minRotation: number
-  maxRotation: number
-  commercePoints: number
-  strengthPoints: number
-  progressPoints: number
-  skillPoints: number
-  victoryPoints: number
-}
-
-const blueStartingCards: CardDefinition[] = [
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 0,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 1,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 2,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 3,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 4,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 5,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 6,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 7,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 8,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 9,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 10,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 11,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 12,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 13,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 14,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "yes",
-    resourceType: "lumber",
-    resourceCount: 1,
-    diceNumber: 3,
-    index: 15,
-    image: blueWood,
-    buildingType: "region",
-    rotation: 0,
-    minRotation: 90,
-    maxRotation: -180,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 16,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "yes",
-    resourceType: "gold",
-    resourceCount: 0,
-    diceNumber: 4,
-    index: 17,
-    image: blueGold,
-    buildingType: "region",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 18,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "yes",
-    resourceType: "grain",
-    resourceCount: 1,
-    diceNumber: 5,
-    index: 19,
-    image: blueWheat,
-    buildingType: "region",
-    rotation: 0,
-    minRotation: 90,
-    maxRotation: -180,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 20,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 21,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 22,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "settlement",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 23,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "road",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 24,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "settlement",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 25,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "road",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 26,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "settlement",
-    display: "yes",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 27,
-    image: blueSettlement,
-    buildingType: "settlement",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 1,
-  },
-  {
-    type: "road",
-    display: "yes",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 28,
-    image: blueRoad,
-    buildingType: "road",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "settlement",
-    display: "yes",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 29,
-    image: blueSettlement,
-    buildingType: "settlement",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 1,
-  },
-  {
-    type: "road",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 30,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "settlement",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 31,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 32,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 33,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 34,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 35,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 36,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "yes",
-    resourceType: "brick",
-    resourceCount: 1,
-    diceNumber: 2,
-    index: 37,
-    image: blueBrick,
-    buildingType: "region",
-    rotation: 0,
-    minRotation: 90,
-    maxRotation: -180,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 38,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "yes",
-    resourceType: "wool",
-    resourceCount: 1,
-    diceNumber: 1,
-    index: 39,
-    image: blueSheep,
-    buildingType: "region",
-    rotation: 0,
-    minRotation: 90,
-    maxRotation: -180,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 40,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "yes",
-    resourceType: "ore",
-    resourceCount: 1,
-    diceNumber: 6,
-    index: 41,
-    image: blueRock,
-    buildingType: "region",
-    rotation: 0,
-    minRotation: 90,
-    maxRotation: -180,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 42,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "region",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 43,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 44,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 45,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 46,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 47,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 48,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 49,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 50,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 51,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 52,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "build",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 53,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-  {
-    type: "none",
-    display: "no",
-    resourceType: "",
-    resourceCount: 0,
-    diceNumber: 0,
-    index: 54,
-    image: "",
-    buildingType: "",
-    rotation: 0,
-    minRotation: 0,
-    maxRotation: -270,
-    commercePoints: 0,
-    strengthPoints: 0,
-    progressPoints: 0,
-    skillPoints: 0,
-    victoryPoints: 0,
-  },
-]
+import {
+  CardDefinition,
+  blueStartingCards,
+  redStartingCards,
+} from "./startingCards.tsx"
 
 interface ResourceTracker {
   lumber: number
@@ -1142,24 +101,44 @@ const startBuildRegion: BuildRegion = {
 }
 
 function App() {
+  // cards setup
+  const [centerCards, setCenterCards] = useState<CenterCard[]>(startCenterCards)
+
+  // states for turns
+  const [collectedCards, setCollectedCards] = useState({
+    blue: false,
+    red: false,
+  })
+  const [turn, setTurn] = useState<string>("blue")
+  const [collectResources, setCollectResources] = useState<boolean>(false)
+  const [buildMode, setBuildMode] = useState(startBuildMode)
+  const [buildRegion, setBuildRegion] = useState(startBuildRegion)
+
+  // player cards
+  const [blueHand, setBlueHand] = useState(blueStartHand)
+  const [redHand, setRedHand] = useState(redStartHand)
+
+  // blue player
   const [blueCards, setBlueCards] =
     useState<CardDefinition[]>(blueStartingCards)
   const [blueResources, setBlueResources] =
     useState<ResourceTracker>(startingResources)
   const [blueOpenExpandTiles, setBlueOpenExpandTiles] =
     useState<OpenExpandTiles>(startingOpenExpandTiles)
+  const [blueSettlements, setBlueSettlements] = useState<number[]>([27, 29])
+
+  // red player
+  const [redCards, setRedCards] = useState<CardDefinition[]>(redStartingCards)
+
   const [colors, setColors] = useState<string[]>(
     new Array(55).fill("transparent")
   )
-  // tracking settlements to turn into cities
-  const [blueSettlements, setBlueSettlements] = useState<number[]>([27, 29])
+
   // variable that tells me if I am building
   // store which card I clicked to build - I think the card already checks if i can build it
   // and which tiles I can actually click on that are valid places to go
-  const [buildMode, setBuildMode] = useState(startBuildMode)
   // region card stack and building regions
   const [regionCards, setRegionCards] = useState<RegionCard[]>(startRegionCards)
-  const [buildRegion, setBuildRegion] = useState(startBuildRegion)
 
   useEffect(() => {
     setBlueResources(blueResources => {
@@ -1497,93 +476,155 @@ function App() {
     setColors(newColors)
   }
 
+  function endTurn() {
+    setTurn(turn => {
+      return turn === "blue" ? "red" : "blue"
+    })
+  }
+
+  function startGame() {
+    console.log(centerCards[0])
+
+    // setBlueHand(blueHand => {
+    //   const newHand = []
+    //   for (let i = 0; i < 3; i++) {
+    //     const card = centerCards
+    //   }
+    // })
+    // setRedHand()
+  }
+
+  function diceRoll() {
+    const rollNumber = Math.ceil(Math.random() * 6)
+    console.log(rollNumber)
+  }
+
   return (
     <>
       <div className="window">
         <div className="player-hand">
-          <div
-            className="card"
-            style={{ backgroundImage: `url(${blueGold})` }}
-          ></div>
-          <div
-            className="card"
-            style={{ backgroundImage: `url(${blueGold})` }}
-          ></div>
-          <div
-            className="card"
-            style={{ backgroundImage: `url(${blueGold})` }}
-          ></div>
+          <div className="card blue"></div>
+          <div className="card blue"></div>
+          <div className="card blue"></div>
         </div>
+
+        <div className="board">
+          {/* red board */}
+          <div className="player-board rotate">
+            {redCards.map((card: CardDefinition, index: number) => {
+              if (card.type === "region") {
+                return (
+                  <div
+                    className="card red"
+                    key={index}
+                    onClick={() => {
+                      if (buildRegion.active) placeRegion(index)
+                    }}
+                    style={{
+                      backgroundImage: `url(${card.image})`,
+                      transform: `rotate(${card.rotation}deg)`,
+                      outline: `5px solid ${colors[index]}`,
+                    }}
+                  ></div>
+                )
+              }
+
+              return (
+                <div
+                  className="card red"
+                  key={index}
+                  onClick={() => {
+                    if (buildMode.active) buildCard(index)
+                  }}
+                  style={{
+                    backgroundImage: `url(${card.image})`,
+                    outline: `5px solid ${colors[index]}`,
+                  }}
+                >
+                  {` ${card.index} ${card.type}`}
+                </div>
+              )
+            })}
+          </div>
+
+          {/* center cards */}
+          <div className="centerCards">
+            {centerCards.map((stack, index) => {
+              return (
+                <div
+                  className="card noBackground"
+                  key={index}
+                  style={{ backgroundImage: `url(${stack.image})` }}
+                  onClick={() => {
+                    if (!buildRegion.active) selectedCenterCard(stack)
+                    console.log("hello")
+                  }}
+                ></div>
+              )
+            })}
+          </div>
+
+          {/* blue board */}
+          <div className="player-board rotate">
+            {blueCards.map((card: CardDefinition, index: number) => {
+              if (card.type === "region") {
+                return (
+                  <div
+                    className="card"
+                    key={index}
+                    onClick={() => {
+                      if (buildRegion.active) placeRegion(index)
+                    }}
+                    style={{
+                      backgroundImage: `url(${card.image})`,
+                      transform: `rotate(${card.rotation}deg)`,
+                      outline: `5px solid ${colors[index]}`,
+                    }}
+                  ></div>
+                )
+              }
+
+              return (
+                <div
+                  className="card"
+                  key={index}
+                  onClick={() => {
+                    if (buildMode.active) buildCard(index)
+                  }}
+                  style={{
+                    backgroundImage: `url(${card.image})`,
+                    outline: `5px solid ${colors[index]}`,
+                  }}
+                >
+                  {` ${card.index} ${card.type}`}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
         <div className="statsBar">
           <div className="resourceTracker">
+            <div className="resource">{`Turn: ${turn}`}</div>
             <div className="resource">{`Brick: ${blueResources.brick}`}</div>
             <div className="resource">{`Gold: ${blueResources.gold}`}</div>
             <div className="resource">{`Grain: ${blueResources.grain}`}</div>
             <div className="resource">{`Lumber: ${blueResources.lumber}`}</div>
             <div className="resource">{`Ore: ${blueResources.ore}`}</div>
             <div className="resource">{`Wool: ${blueResources.wool}`}</div>
-          </div>
-          <div className="resourceTracker">
             <div className="resource">{`Victory Points: ${blueResources.victoryPoints}`}</div>
             <div className="resource">{`Commerce Points: ${blueResources.commercePoints}`}</div>
             <div className="resource">{`Strength Points: ${blueResources.strengthPoints}`}</div>
-          </div>
-          <div className="resourceTracker">
             <div className="resource">{`Progress Points: ${blueResources.progressPoints}`}</div>
             <div className="resource">{`Skill Points: ${blueResources.skillPoints}`}</div>
           </div>
-        </div>
-
-        <div className="centerCards">
-          {centerCards.map((stack, index) => {
-            return (
-              <div
-                className="card noBackground"
-                key={index}
-                style={{ backgroundImage: `url(${stack.image})` }}
-                onClick={() => {
-                  if (!buildRegion.active) selectedCenterCard(stack)
-                }}
-              ></div>
-            )
-          })}
-        </div>
-
-        <div className="board rotate">
-          {blueCards.map((card: CardDefinition, index: number) => {
-            if (card.type === "region") {
-              return (
-                <div
-                  className="card"
-                  key={index}
-                  onClick={() => {
-                    if (buildRegion.active) placeRegion(index)
-                  }}
-                  style={{
-                    backgroundImage: `url(${card.image})`,
-                    transform: `rotate(${card.rotation}deg)`,
-                    outline: `5px solid ${colors[index]}`,
-                  }}
-                ></div>
-              )
-            }
-
-            return (
-              <div
-                className="card"
-                key={index}
-                onClick={() => {
-                  if (buildMode.active) buildCard(index)
-                }}
-                style={{
-                  backgroundImage: `url(${card.image})`,
-                  outline: `5px solid ${colors[index]}`,
-                }}
-              >
-                {` ${card.index} ${card.type}`}
-              </div>
-            )
-          })}
+          <button className="end-turn" onClick={endTurn}>
+            End Turn
+          </button>
+          <button className="end-turn" onClick={diceRoll}>
+            Roll Dice
+          </button>
+          <button className="end-turn">Start Game</button>
         </div>
       </div>
     </>
