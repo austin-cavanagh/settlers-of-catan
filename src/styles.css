@@ -131,6 +131,7 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  gap: 1px;
 }
 
 .resource {
