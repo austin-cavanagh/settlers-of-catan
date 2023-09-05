@@ -122,17 +122,9 @@ function App() {
   const [blueHand, setBlueHand] = useState(blueStartHand)
   const [redHand, setRedHand] = useState(redStartHand)
 
-  // blue player
-  const [blueCards, setBlueCards] =
-    useState<CardDefinition[]>(blueStartingCards)
-  const [blueResources, setBlueResources] =
-    useState<ResourceTracker>(startingResources)
-
   const [regionCards, setRegionCards] = useState<RegionCard[]>(startRegionCards)
 
   // red player
-  const [redCards, setRedCards] = useState<CardDefinition[]>(redStartingCards)
-
   const [blueColors, setBlueColors] = useState<string[]>(startColors)
   const [redColors, setRedColors] = useState<string[]>(startColors)
   const [buildMode, setBuildMode] = useState(startBuildMode)
@@ -141,12 +133,24 @@ function App() {
   const [blueOpenExpandTiles, setBlueOpenExpandTiles] =
     useState<OpenExpandTiles>(startingOpenExpandTiles)
   const [redOpenExpandTiles, setRedOpenExpandTiles] = useState<OpenExpandTiles>(
-    startingOpenExpandTiles
+    {
+      left: { building: "road", index: 26 },
+      right: { building: "road", index: 30 },
+    }
   )
   const [blueSettlements, setBlueSettlements] =
     useState<number[]>(startSettlements)
   const [redSettlements, setRedSettlements] =
     useState<number[]>(startSettlements)
+
+  const [blueResources, setBlueResources] =
+    useState<ResourceTracker>(startingResources)
+  const [redResources, setRedResources] =
+    useState<ResourceTracker>(startingResources)
+
+  const [blueCards, setBlueCards] =
+    useState<CardDefinition[]>(blueStartingCards)
+  const [redCards, setRedCards] = useState<CardDefinition[]>(redStartingCards)
 
   useEffect(() => {
     setBlueResources(blueResources => {
@@ -171,6 +175,40 @@ function App() {
         } else {
           // update resource points
           const newCount: number = blueCards.reduce((acc: number, currCard) => {
+            if (resource === currCard.resourceType) {
+              acc += currCard.resourceCount
+            }
+            return acc
+          }, 0)
+          newResources[resource] = newCount
+        }
+      })
+
+      return newResources
+    })
+
+    setRedResources(redResources => {
+      const newResources: ResourceTracker = { ...redResources }
+
+      Object.keys(redResources).forEach(resourceKey => {
+        // typecast?
+        const resource = resourceKey as keyof ResourceTracker
+
+        // update victory, commerce, strength points
+        if (
+          resource === "victoryPoints" ||
+          resource === "commercePoints" ||
+          resource === "strengthPoints" ||
+          resource === "progressPoints" ||
+          resource === "skillPoints"
+        ) {
+          const newCount: number = redCards.reduce((acc: number, currCard) => {
+            return acc + currCard[resource]
+          }, 0)
+          newResources[resource] = newCount
+        } else {
+          // update resource points
+          const newCount: number = redCards.reduce((acc: number, currCard) => {
             if (resource === currCard.resourceType) {
               acc += currCard.resourceCount
             }
@@ -299,55 +337,113 @@ function App() {
     const newColors = new Array(55).fill("transparent")
 
     // if stack is a road
-    if (
-      building === "road" &&
-      (blueOpenExpandTiles.left.building === "road" ||
-        blueOpenExpandTiles.right.building === "road")
-    ) {
-      // highlighting possible moves and tracking which tiles
-      const possibleMoves: number[] = []
-      if (building === blueOpenExpandTiles.left.building) {
-        newColors[blueOpenExpandTiles.left.index] = "green"
-        possibleMoves.push(blueOpenExpandTiles.left.index)
+    if (turn === "blue") {
+      if (
+        building === "road" &&
+        (blueOpenExpandTiles.left.building === "road" ||
+          blueOpenExpandTiles.right.building === "road")
+      ) {
+        // highlighting possible moves and tracking which tiles
+        const possibleMoves: number[] = []
+        if (building === blueOpenExpandTiles.left.building) {
+          newColors[blueOpenExpandTiles.left.index] = "green"
+          possibleMoves.push(blueOpenExpandTiles.left.index)
+        }
+        if (building === blueOpenExpandTiles.right.building) {
+          newColors[blueOpenExpandTiles.right.index] = "green"
+          possibleMoves.push(blueOpenExpandTiles.right.index)
+        }
+        setBuildMode(buildMode => {
+          buildMode.active = turn
+          buildMode.buildingType = building
+          buildMode.possibleMoves = possibleMoves
+          buildMode.victoryPoints = 0
+          buildMode.image = blueRoad
+          return buildMode
+        })
       }
-      if (building === blueOpenExpandTiles.right.building) {
-        newColors[blueOpenExpandTiles.right.index] = "green"
-        possibleMoves.push(blueOpenExpandTiles.right.index)
+    }
+
+    if (turn === "red") {
+      if (
+        building === "road" &&
+        (redOpenExpandTiles.left.building === "road" ||
+          redOpenExpandTiles.right.building === "road")
+      ) {
+        // highlighting possible moves and tracking which tiles
+        const possibleMoves: number[] = []
+        if (building === redOpenExpandTiles.left.building) {
+          newColors[redOpenExpandTiles.left.index] = "green"
+          possibleMoves.push(redOpenExpandTiles.left.index)
+        }
+        if (building === redOpenExpandTiles.right.building) {
+          newColors[redOpenExpandTiles.right.index] = "green"
+          possibleMoves.push(redOpenExpandTiles.right.index)
+        }
+        setBuildMode(buildMode => {
+          buildMode.active = turn
+          buildMode.buildingType = building
+          buildMode.possibleMoves = possibleMoves
+          buildMode.victoryPoints = 0
+          buildMode.image = blueRoad
+          return buildMode
+        })
       }
-      setBuildMode(buildMode => {
-        buildMode.active = turn
-        buildMode.buildingType = building
-        buildMode.possibleMoves = possibleMoves
-        buildMode.victoryPoints = 0
-        buildMode.image = blueRoad
-        return buildMode
-      })
     }
 
     // if stack is a settlement
-    if (
-      building === "settlement" &&
-      (blueOpenExpandTiles.left.building === "settlement" ||
-        blueOpenExpandTiles.right.building === "settlement")
-    ) {
-      // highlighting possible moves and tracking which tiles
-      const possibleMoves: number[] = []
-      if (building === blueOpenExpandTiles.left.building) {
-        newColors[blueOpenExpandTiles.left.index] = "green"
-        possibleMoves.push(blueOpenExpandTiles.left.index)
+    if (turn === "blue") {
+      if (
+        building === "settlement" &&
+        (blueOpenExpandTiles.left.building === "settlement" ||
+          blueOpenExpandTiles.right.building === "settlement")
+      ) {
+        // highlighting possible moves and tracking which tiles
+        const possibleMoves: number[] = []
+        if (building === blueOpenExpandTiles.left.building) {
+          newColors[blueOpenExpandTiles.left.index] = "green"
+          possibleMoves.push(blueOpenExpandTiles.left.index)
+        }
+        if (building === blueOpenExpandTiles.right.building) {
+          newColors[blueOpenExpandTiles.right.index] = "green"
+          possibleMoves.push(blueOpenExpandTiles.right.index)
+        }
+        setBuildMode(buildMode => {
+          buildMode.active = turn
+          buildMode.buildingType = building
+          buildMode.possibleMoves = possibleMoves
+          buildMode.victoryPoints = 1
+          buildMode.image = blueSettlement
+          return buildMode
+        })
       }
-      if (building === blueOpenExpandTiles.right.building) {
-        newColors[blueOpenExpandTiles.right.index] = "green"
-        possibleMoves.push(blueOpenExpandTiles.right.index)
+    }
+
+    if (turn === "red") {
+      if (
+        building === "settlement" &&
+        (redOpenExpandTiles.left.building === "settlement" ||
+          redOpenExpandTiles.right.building === "settlement")
+      ) {
+        // highlighting possible moves and tracking which tiles
+        const possibleMoves: number[] = []
+        if (building === redOpenExpandTiles.left.building) {
+          newColors[redOpenExpandTiles.left.index] = "green"
+          possibleMoves.push(redOpenExpandTiles.left.index)
+        }
+        if (building === redOpenExpandTiles.right.building) {
+          newColors[redOpenExpandTiles.right.index] = "green"
+          possibleMoves.push(redOpenExpandTiles.right.index)
+        }
+        setBuildMode(buildMode => {
+          buildMode.active = turn
+          buildMode.buildingType = building
+          buildMode.possibleMoves = possibleMoves
+          buildMode.victoryPoints = 1
+          buildMode.image = blueSettlement
+          return buildMode
+        })
       }
-      setBuildMode(buildMode => {
-        buildMode.active = turn
-        buildMode.buildingType = building
-        buildMode.possibleMoves = possibleMoves
-        buildMode.victoryPoints = 1
-        buildMode.image = blueSettlement
-        return buildMode
-      })
     }
 
     // if stack is a city
@@ -376,22 +472,43 @@ function App() {
 
     // if the index is included in possible moves change card
     if (buildMode.possibleMoves.includes(index)) {
-      setBlueCards(
-        blueCards.map((card, currIndex) => {
-          // if we find the card update it
-          if (index === currIndex) {
-            return {
-              ...card,
-              dispay: "yes",
-              buildingType: buildMode.buildingType,
-              victoryPoints: buildMode.victoryPoints,
-              image: buildMode.image,
+      if (turn === "blue") {
+        setBlueCards(
+          blueCards.map((card, currIndex) => {
+            // if we find the card update it
+            if (index === currIndex) {
+              return {
+                ...card,
+                display: "yes",
+                buildingType: buildMode.buildingType,
+                victoryPoints: buildMode.victoryPoints,
+                image: buildMode.image,
+              }
             }
-          }
-          // if not the card return card
-          return card
-        })
-      )
+            // if not the card return card
+            return card
+          })
+        )
+      }
+
+      if (turn === "red") {
+        setRedCards(
+          redCards.map((card, currIndex) => {
+            // if we find the card update it
+            if (index === currIndex) {
+              return {
+                ...card,
+                display: "yes",
+                buildingType: buildMode.buildingType,
+                victoryPoints: buildMode.victoryPoints,
+                image: buildMode.image,
+              }
+            }
+            // if not the card return card
+            return card
+          })
+        )
+      }
 
       // if building settlement we must also place 2 region cards
       if (buildMode.buildingType === "settlement") {
@@ -413,21 +530,35 @@ function App() {
           moves.push(index + 12)
         }
 
-        // update colors of regions we want to build
-        newColors[moves[0]] = "green"
-        newColors[moves[1]] = "green"
+        if (turn === "blue") {
+          setBlueCards(blueCards => {
+            blueCards[moves[0]].buildingType = regionCard1?.buildingType
+            blueCards[moves[0]].resourceType = regionCard1?.resourceType
+            blueCards[moves[0]].diceNumber = regionCard1?.diceNumber
+            blueCards[moves[0]].image = regionCard1?.image
 
-        setBuildRegion(buildRegion => {
-          buildRegion.active = turn
-          buildRegion.buildSpots = moves
-          buildRegion.resourceType1 = regionCard1?.resourceType
-          buildRegion.diceNumber1 = regionCard1?.diceNumber
-          buildRegion.image1 = regionCard1?.image
-          buildRegion.resourceType2 = regionCard2?.resourceType
-          buildRegion.diceNumber2 = regionCard2?.diceNumber
-          buildRegion.image2 = regionCard2?.image
-          return buildRegion
-        })
+            blueCards[moves[1]].buildingType = regionCard2?.buildingType
+            blueCards[moves[1]].resourceType = regionCard2?.resourceType
+            blueCards[moves[1]].diceNumber = regionCard2?.diceNumber
+            blueCards[moves[1]].image = regionCard2?.image
+            return blueCards
+          })
+        }
+
+        if (turn === "red") {
+          setRedCards(redCards => {
+            redCards[moves[0]].buildingType = regionCard1?.buildingType
+            redCards[moves[0]].resourceType = regionCard1?.resourceType
+            redCards[moves[0]].diceNumber = regionCard1?.diceNumber
+            redCards[moves[0]].image = regionCard1?.image
+
+            redCards[moves[1]].buildingType = regionCard2?.buildingType
+            redCards[moves[1]].resourceType = regionCard2?.resourceType
+            redCards[moves[1]].diceNumber = regionCard2?.diceNumber
+            redCards[moves[1]].image = regionCard2?.image
+            return redCards
+          })
+        }
       }
     }
 
@@ -446,83 +577,6 @@ function App() {
     if (turn === "red") setRedColors(newColors)
   }
 
-  // places region cards on the board
-  function placeRegion(clickIndex: number) {
-    const newColors = new Array(55).fill("transparent")
-
-    // will run the function run 2 times, 1 for each placement
-    // so if there are 2 spots this is the first run
-    if (buildRegion.buildSpots.length === 2) {
-      // determine which index is being built this run
-      let index: number | undefined
-
-      const remainingSpot: number[] = []
-      if (buildRegion.buildSpots[1] === clickIndex) {
-        remainingSpot.push(buildRegion.buildSpots[0])
-        newColors[buildRegion.buildSpots[0]] = "green"
-        index = buildRegion.buildSpots[1]
-      } else {
-        remainingSpot.push(buildRegion.buildSpots[1])
-        newColors[buildRegion.buildSpots[1]] = "green"
-        index = buildRegion.buildSpots[0]
-      }
-
-      // update cards for first region
-      setBlueCards(
-        blueCards.map((card, currIndex) => {
-          if (index === currIndex) {
-            card.buildingType = "region"
-            card.resourceType = buildRegion.resourceType1
-            card.diceNumber = buildRegion.diceNumber1
-            card.image = buildRegion.image1
-          }
-
-          return card
-        })
-      )
-
-      // clearing information for spot 1
-      setBuildRegion(buildRegion => {
-        buildRegion.active = turn
-        buildRegion.buildSpots = remainingSpot
-        buildRegion.resourceType1 = ""
-        buildRegion.diceNumber1 = 0
-        buildRegion.image1 = ""
-        return buildRegion
-      })
-    }
-
-    if (buildRegion.buildSpots.length === 1) {
-      const index = buildRegion.buildSpots[0]
-
-      setBuildRegion(buildRegion => {
-        buildRegion.active = ""
-        buildRegion.buildSpots = []
-        buildRegion.resourceType2 = ""
-        buildRegion.diceNumber2 = 0
-        buildRegion.image2 = ""
-        return buildRegion
-      })
-
-      // update cards for second region
-      setBlueCards(
-        blueCards.map((card, currIndex) => {
-          if (index === currIndex) {
-            card.buildingType = "region"
-            card.resourceType = buildRegion.resourceType2
-            card.diceNumber = buildRegion.diceNumber2
-            card.image = buildRegion.image2
-          }
-
-          return card
-        })
-      )
-    }
-
-    if (turn === "blue") setBlueColors(newColors)
-    if (turn === "red") setRedColors(newColors)
-  }
-
   function endTurn() {
     setTurn(turn => {
       return turn === "blue" ? "red" : "blue"
@@ -530,6 +584,9 @@ function App() {
   }
 
   function startGame() {}
+
+  console.log("red", redOpenExpandTiles)
+  console.log("blue", blueOpenExpandTiles)
 
   return (
     <>
@@ -549,10 +606,6 @@ function App() {
                   <div
                     className="card red"
                     key={index}
-                    onClick={() => {
-                      if (buildRegion.active && turn === "red")
-                        placeRegion(index)
-                    }}
                     style={{
                       backgroundImage: `url(${card.image})`,
                       transform: `rotate(${card.rotation}deg)`,
@@ -604,10 +657,6 @@ function App() {
                   <div
                     className="card"
                     key={index}
-                    onClick={() => {
-                      if (buildRegion.active && turn === "blue")
-                        placeRegion(index)
-                    }}
                     style={{
                       backgroundImage: `url(${card.image})`,
                       transform: `rotate(${card.rotation}deg)`,

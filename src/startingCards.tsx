@@ -24,7 +24,7 @@ export interface CardDefinition {
   diceNumber: number | undefined
   index: number
   image: string | undefined
-  buildingType: string
+  buildingType: string | undefined
   rotation: number
   minRotation: number
   maxRotation: number
