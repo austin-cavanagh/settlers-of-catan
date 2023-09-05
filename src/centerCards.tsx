@@ -781,12 +781,12 @@ export const startCenterCards: CenterCard[] = [
     image: questionFront,
   },
   {
-    cardStack: "Basic-3",
+    cardStack: "basic-3",
     cardsInStack: basic3,
     image: basicFront,
   },
   {
-    cardStack: "Basic-4",
+    cardStack: "basic-4",
     cardsInStack: basic4,
     image: basicFront,
   },

@@ -95,12 +95,8 @@ body {
   background-color: transparent;
 }
 
-.red {
+.red-letters {
   color: red;
-}
-
-.blue {
-  background-color: blue;
 }
 
 .noBackground {
@@ -152,4 +148,12 @@ body {
   height: 30px;
   width: 80px;
   margin-top: 10px;
+}
+
+.blue {
+  background-color: blue;
+}
+
+.red {
+  background-color: red;
 }

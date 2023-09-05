@@ -11,6 +11,7 @@ import {
   startRegionCards,
   blueStartHand,
   redStartHand,
+  CardStats,
 } from "./centerCards.tsx"
 
 import {
@@ -69,6 +70,10 @@ interface BuildMode {
   buildingType: string
   possibleMoves: number[]
   victoryPoints: number
+  skillPoints: number
+  progressPoints: number
+  commercePoints: number
+  strengthPoints: number
   image: string
 }
 
@@ -77,6 +82,10 @@ const startBuildMode: BuildMode = {
   buildingType: "",
   possibleMoves: [],
   victoryPoints: 0,
+  skillPoints: 0,
+  progressPoints: 0,
+  commercePoints: 0,
+  strengthPoints: 0,
   image: "",
 }
 
@@ -106,6 +115,22 @@ const startColors: string[] = new Array(55).fill("transparent")
 
 const startSettlements: number[] = [27, 29]
 
+const startOpenBuildTiles: number[] = [16, 18, 38, 40]
+
+interface StartBuildBasic {
+  active: string
+  possibleMoves: number[]
+  card: CardStats
+  stackName: string
+}
+
+const startBuildBasic: StartBuildBasic = {
+  active: "",
+  possibleMoves: [],
+  card: [],
+  stackName: "",
+}
+
 function App() {
   // cards setup
   const [centerCards, setCenterCards] = useState<CenterCard[]>(startCenterCards)
@@ -127,8 +152,11 @@ function App() {
   // red player
   const [blueColors, setBlueColors] = useState<string[]>(startColors)
   const [redColors, setRedColors] = useState<string[]>(startColors)
-  const [buildMode, setBuildMode] = useState(startBuildMode)
-  const [buildRegion, setBuildRegion] = useState(startBuildRegion)
+
+  // variables for selecting and placing cards
+  const [buildMode, setBuildMode] = useState<BuildMode>(startBuildMode)
+  const [buildRegion, setBuildRegion] = useState<BuildRegion>(startBuildRegion)
+  const [buildBasic, setBuildBasic] = useState<StartBuildBasic>(startBuildBasic)
 
   const [blueOpenExpandTiles, setBlueOpenExpandTiles] =
     useState<OpenExpandTiles>(startingOpenExpandTiles)
@@ -138,6 +166,13 @@ function App() {
       right: { building: "road", index: 30 },
     }
   )
+
+  const [blueOpenBuildTiles, setBlueOpenBuildTiles] = useState<number[]>([
+    16, 18, 38, 40,
+  ])
+  const [redOpenBuildTiles, setRedOpenBuildTiles] =
+    useState<number[]>(startOpenBuildTiles)
+
   const [blueSettlements, setBlueSettlements] =
     useState<number[]>(startSettlements)
   const [redSettlements, setRedSettlements] =
@@ -283,6 +318,42 @@ function App() {
       return redOpenExpandTiles
     })
 
+    setBlueOpenBuildTiles(() => {
+      const buildTiles: number[] = []
+      blueCards.forEach((tile, index) => {
+        if (tile.buildingType === "settlement") {
+          buildTiles.push(index - 11)
+          buildTiles.push(index + 11)
+        }
+        if (tile.buildingType === "city") {
+          buildTiles.push(index - 22)
+          buildTiles.push(index - 11)
+          buildTiles.push(index + 11)
+          buildTiles.push(index + 22)
+        }
+      })
+
+      return buildTiles
+    })
+
+    setRedOpenBuildTiles(() => {
+      const buildTiles: number[] = []
+      redCards.forEach((tile, index) => {
+        if (tile.buildingType === "settlement") {
+          buildTiles.push(index - 11)
+          buildTiles.push(index + 11)
+        }
+        if (tile.buildingType === "city") {
+          buildTiles.push(index - 22)
+          buildTiles.push(index - 11)
+          buildTiles.push(index + 11)
+          buildTiles.push(index + 22)
+        }
+      })
+
+      return buildTiles
+    })
+
     setBlueSettlements(blueSettlements => {
       const newArray: number[] = []
       blueCards.forEach((card, index) => {
@@ -331,10 +402,32 @@ function App() {
   }
 
   function selectedCenterCard(stack: CenterCard) {
+    // RESET EACH BUILD FUNCTION EACH TIME WE RUN THE FUNCTION
+    // create outside function that can be called to reset all
+
     const building = stack.cardStack
-    const cards = stack.cardsInStack
+
     // create new color array and set all colors to transparent
     const newColors = new Array(55).fill("transparent")
+
+    // building basic cards
+    if (building.slice(0, 5) === "basic") {
+      const card = stack.cardsInStack[0]
+      const possibleMovesByColor =
+        turn === "blue" ? blueOpenBuildTiles : redOpenBuildTiles
+
+      setBuildBasic(buildBasic => {
+        buildBasic.active = turn
+        buildBasic.card = card
+        buildBasic.possibleMoves = possibleMovesByColor
+        buildBasic.stackName = building
+        return buildBasic
+      })
+
+      possibleMovesByColor.forEach(index => {
+        newColors[index] = "green"
+      })
+    }
 
     // if stack is a road
     if (turn === "blue") {
@@ -462,8 +555,7 @@ function App() {
       })
     }
 
-    if (turn === "blue") setBlueColors(newColors)
-    if (turn === "red") setRedColors(newColors)
+    turn === "blue" ? setBlueColors(newColors) : setRedColors(newColors)
   }
 
   function buildCard(index: number) {
@@ -572,6 +664,9 @@ function App() {
       return buildMode
     })
 
+    // reset build basic
+    // dont forget I need to update the center cards once we build the cards
+
     // set colors
     if (turn === "blue") setBlueColors(newColors)
     if (turn === "red") setRedColors(newColors)
@@ -585,16 +680,13 @@ function App() {
 
   function startGame() {}
 
-  console.log("red", redOpenExpandTiles)
-  console.log("blue", blueOpenExpandTiles)
-
   return (
     <>
       <div className="window">
         <div className="player-hand">
-          <div className="card blue"></div>
-          <div className="card blue"></div>
-          <div className="card blue"></div>
+          <div className={`card ${turn}`}></div>
+          <div className={`card ${turn}`}></div>
+          <div className={`card ${turn}`}></div>
         </div>
 
         <div className="board">
@@ -604,7 +696,7 @@ function App() {
               if (card.type === "region") {
                 return (
                   <div
-                    className="card red"
+                    className="card"
                     key={index}
                     style={{
                       backgroundImage: `url(${card.image})`,
@@ -617,10 +709,11 @@ function App() {
 
               return (
                 <div
-                  className="card red"
+                  className="card red-letters"
                   key={index}
                   onClick={() => {
                     if (buildMode.active === "red") buildCard(index)
+                    if (buildBasic.active === "red") buildCard(index)
                   }}
                   style={{
                     backgroundImage: `url(${card.image})`,
@@ -672,6 +765,7 @@ function App() {
                   key={index}
                   onClick={() => {
                     if (buildMode.active === "blue") buildCard(index)
+                    if (buildBasic.active === "blue") buildCard(index)
                   }}
                   style={{
                     backgroundImage: `url(${card.image})`,
