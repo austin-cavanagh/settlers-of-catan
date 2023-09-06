@@ -28,11 +28,11 @@ export interface CardDefinition {
   rotation: number
   minRotation: number
   maxRotation: number
-  commercePoints: number
-  strengthPoints: number
-  progressPoints: number
-  skillPoints: number
-  victoryPoints: number
+  commercePoints: number | undefined
+  strengthPoints: number | undefined
+  progressPoints: number | undefined
+  skillPoints: number | undefined
+  victoryPoints: number | undefined
 }
 
 export const blueStartingCards: CardDefinition[] = [

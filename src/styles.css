@@ -66,8 +66,8 @@ body {
 
 /* player hand */
 .player-hand {
-  height: 300px;
-  width: 100px;
+  height: 600px;
+  width: 192px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -75,6 +75,10 @@ body {
   gap: 1%;
   cursor: grab;
   margin-right: 50px;
+}
+
+.player-hand:active {
+  cursor: grabbing;
 }
 
 /* card */

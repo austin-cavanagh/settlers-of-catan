@@ -120,15 +120,13 @@ const startOpenBuildTiles: number[] = [16, 18, 38, 40]
 interface StartBuildBasic {
   active: string
   possibleMoves: number[]
-  card: CardStats
-  stackName: string
+  card: CardStats | undefined
 }
 
 const startBuildBasic: StartBuildBasic = {
   active: "",
   possibleMoves: [],
-  card: [],
-  stackName: "",
+  card: undefined,
 }
 
 function App() {
@@ -401,6 +399,25 @@ function App() {
     })
   }
 
+  function selectCardFromHand(card: CardStats) {
+    const newColors = new Array(55).fill("transparent")
+    const possibleMovesByColor =
+      turn === "blue" ? blueOpenBuildTiles : redOpenBuildTiles
+
+    setBuildBasic(buildBasic => {
+      buildBasic.active = turn
+      buildBasic.card = card
+      buildBasic.possibleMoves = possibleMovesByColor
+      return buildBasic
+    })
+
+    possibleMovesByColor.forEach(index => {
+      newColors[index] = "green"
+    })
+
+    turn === "blue" ? setBlueColors(newColors) : setRedColors(newColors)
+  }
+
   function selectedCenterCard(stack: CenterCard) {
     // RESET EACH BUILD FUNCTION EACH TIME WE RUN THE FUNCTION
     // create outside function that can be called to reset all
@@ -412,21 +429,7 @@ function App() {
 
     // building basic cards
     if (building.slice(0, 5) === "basic") {
-      const card = stack.cardsInStack[0]
-      const possibleMovesByColor =
-        turn === "blue" ? blueOpenBuildTiles : redOpenBuildTiles
-
-      setBuildBasic(buildBasic => {
-        buildBasic.active = turn
-        buildBasic.card = card
-        buildBasic.possibleMoves = possibleMovesByColor
-        buildBasic.stackName = building
-        return buildBasic
-      })
-
-      possibleMovesByColor.forEach(index => {
-        newColors[index] = "green"
-      })
+      // update the length of each basic stack
     }
 
     // if stack is a road
@@ -559,8 +562,31 @@ function App() {
   }
 
   function buildCard(index: number) {
+    const currCards = turn === "blue" ? blueCards : redCards
+    const setCurrCards = turn === "blue" ? setBlueCards : setRedCards
+
     // reset colors back to default
     const newColors = new Array(55).fill("transparent")
+
+    // dont forget I need to update the center cards once we build the cards
+
+    // determine if i am building a basic card or expansion card
+    if (buildBasic.possibleMoves.includes(index)) {
+      setCurrCards(
+        currCards.map((card, currIndex) => {
+          if (index === currIndex) {
+            return {
+              ...card,
+              display: "yes",
+              buildingType: buildBasic.card?.cardName,
+              image: buildBasic.card?.image,
+            }
+          }
+
+          return card
+        })
+      )
+    }
 
     // if the index is included in possible moves change card
     if (buildMode.possibleMoves.includes(index)) {
@@ -573,8 +599,12 @@ function App() {
                 ...card,
                 display: "yes",
                 buildingType: buildMode.buildingType,
-                victoryPoints: buildMode.victoryPoints,
                 image: buildMode.image,
+                skillPoints: buildMode.skillPoints,
+                progressPoints: buildMode.progressPoints,
+                commercePoints: buildMode.commercePoints,
+                strengthPoints: buildMode.strengthPoints,
+                victoryPoints: buildMode.victoryPoints,
               }
             }
             // if not the card return card
@@ -586,7 +616,6 @@ function App() {
       if (turn === "red") {
         setRedCards(
           redCards.map((card, currIndex) => {
-            // if we find the card update it
             if (index === currIndex) {
               return {
                 ...card,
@@ -596,7 +625,6 @@ function App() {
                 image: buildMode.image,
               }
             }
-            // if not the card return card
             return card
           })
         )
@@ -655,6 +683,7 @@ function App() {
     }
 
     // turn off build mode and reset variables
+    // add function to reset both builds
     setBuildMode(buildMode => {
       buildMode.active = ""
       buildMode.buildingType = ""
@@ -663,9 +692,6 @@ function App() {
       buildMode.image = ""
       return buildMode
     })
-
-    // reset build basic
-    // dont forget I need to update the center cards once we build the cards
 
     // set colors
     if (turn === "blue") setBlueColors(newColors)
@@ -680,13 +706,27 @@ function App() {
 
   function startGame() {}
 
+  console.log(buildBasic)
+  console.log(blueCards[16])
+
   return (
     <>
       <div className="window">
         <div className="player-hand">
-          <div className={`card ${turn}`}></div>
-          <div className={`card ${turn}`}></div>
-          <div className={`card ${turn}`}></div>
+          {(turn === "blue" ? blueHand : redHand).map((card, index) => {
+            return (
+              <div
+                className={`card`}
+                key={index}
+                style={{
+                  backgroundImage: `url(${card.image})`,
+                }}
+                onClick={() => {
+                  selectCardFromHand(card)
+                }}
+              ></div>
+            )
+          })}
         </div>
 
         <div className="board">
@@ -735,7 +775,8 @@ function App() {
                   key={index}
                   style={{ backgroundImage: `url(${stack.image})` }}
                   onClick={() => {
-                    if (!buildRegion.active) selectedCenterCard(stack)
+                    if (stack.cardStack.slice(0, 5) !== "basic")
+                      selectedCenterCard(stack)
                   }}
                 ></div>
               )
@@ -781,18 +822,40 @@ function App() {
 
         <div className="statsBar">
           <div className="resourceTracker">
-            <div className="resource">{`Turn: ${turn}`}</div>
-            <div className="resource">{`Brick: ${blueResources.brick}`}</div>
-            <div className="resource">{`Gold: ${blueResources.gold}`}</div>
-            <div className="resource">{`Grain: ${blueResources.grain}`}</div>
-            <div className="resource">{`Lumber: ${blueResources.lumber}`}</div>
-            <div className="resource">{`Ore: ${blueResources.ore}`}</div>
-            <div className="resource">{`Wool: ${blueResources.wool}`}</div>
-            <div className="resource">{`Victory Points: ${blueResources.victoryPoints}`}</div>
-            <div className="resource">{`Commerce Points: ${blueResources.commercePoints}`}</div>
-            <div className="resource">{`Strength Points: ${blueResources.strengthPoints}`}</div>
-            <div className="resource">{`Progress Points: ${blueResources.progressPoints}`}</div>
-            <div className="resource">{`Skill Points: ${blueResources.skillPoints}`}</div>
+            <div className={`resource ${turn}`}>{`Turn: ${turn}`}</div>
+            <div className={`resource ${turn}`}>{`Brick: ${
+              (turn === "blue" ? blueResources : redResources).brick
+            }`}</div>
+            <div className={`resource ${turn}`}>{`Gold: ${
+              (turn === "blue" ? blueResources : redResources).gold
+            }`}</div>
+            <div className={`resource ${turn}`}>{`Grain: ${
+              (turn === "blue" ? blueResources : redResources).grain
+            }`}</div>
+            <div className={`resource ${turn}`}>{`Lumber: ${
+              (turn === "blue" ? blueResources : redResources).lumber
+            }`}</div>
+            <div className={`resource ${turn}`}>{`Ore: ${
+              (turn === "blue" ? blueResources : redResources).ore
+            }`}</div>
+            <div className={`resource ${turn}`}>{`Wool: ${
+              (turn === "blue" ? blueResources : redResources).wool
+            }`}</div>
+            <div className={`resource ${turn}`}>{`Victory Points: ${
+              (turn === "blue" ? blueResources : redResources).victoryPoints
+            }`}</div>
+            <div className={`resource ${turn}`}>{`Commerce Points: ${
+              (turn === "blue" ? blueResources : redResources).commercePoints
+            }`}</div>
+            <div className={`resource ${turn}`}>{`Strength Points: ${
+              (turn === "blue" ? blueResources : redResources).strengthPoints
+            }`}</div>
+            <div className={`resource ${turn}`}>{`Progress Points: ${
+              (turn === "blue" ? blueResources : redResources).progressPoints
+            }`}</div>
+            <div className={`resource ${turn}`}>{`Skill Points: ${
+              (turn === "blue" ? blueResources : redResources).skillPoints
+            }`}</div>
           </div>
           <button className="end-turn">Start Game</button>
           <button className="end-turn" onClick={endTurn}>
