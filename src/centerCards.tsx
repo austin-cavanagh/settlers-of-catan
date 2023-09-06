@@ -525,10 +525,7 @@ const allBasicCards: CardStats[] = [
 // shuffeling basic cards
 const shuffledBasicCards = shuffle(allBasicCards)
 // seperating basic cards into 4 arrays
-const basic1 = shuffledBasicCards.slice(0, 4)
-const basic2 = shuffledBasicCards.slice(4, 8)
-const basic3 = shuffledBasicCards.slice(8, 12)
-const basic4 = shuffledBasicCards.slice(12, 16)
+const basic = shuffledBasicCards.slice(0, 16)
 // assigning starting player cards
 export const blueStartHand = shuffledBasicCards.slice(16, 19)
 export const redStartHand = shuffledBasicCards.slice(19, 22)
@@ -746,16 +743,6 @@ const questionCards = shuffle(unshuffledQuestionCards)
 // all center cards
 export const startCenterCards: CenterCard[] = [
   {
-    cardStack: "basic-1",
-    cardsInStack: basic1,
-    image: basicFront,
-  },
-  {
-    cardStack: "basic-2",
-    cardsInStack: basic2,
-    image: basicFront,
-  },
-  {
     cardStack: "road",
     cardsInStack: roads,
     image: roadFront,
@@ -781,13 +768,8 @@ export const startCenterCards: CenterCard[] = [
     image: questionFront,
   },
   {
-    cardStack: "basic-3",
-    cardsInStack: basic3,
-    image: basicFront,
-  },
-  {
-    cardStack: "basic-4",
-    cardsInStack: basic4,
+    cardStack: "basic",
+    cardsInStack: basic,
     image: basicFront,
   },
 ]

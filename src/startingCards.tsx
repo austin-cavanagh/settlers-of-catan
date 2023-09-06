@@ -33,6 +33,7 @@ export interface CardDefinition {
   progressPoints: number | undefined
   skillPoints: number | undefined
   victoryPoints: number | undefined
+  resourceMultiplyer: string
 }
 
 export const blueStartingCards: CardDefinition[] = [
@@ -53,6 +54,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -71,6 +73,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -89,6 +92,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -107,6 +111,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -125,6 +130,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -143,6 +149,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -161,6 +168,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -179,6 +187,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -197,6 +206,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -215,6 +225,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -233,6 +244,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -251,6 +263,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -269,6 +282,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -287,6 +301,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -305,6 +320,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -323,6 +339,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -341,6 +358,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -359,6 +377,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -377,6 +396,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -395,6 +415,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -413,6 +434,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -431,6 +453,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -449,6 +472,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "settlement",
@@ -467,6 +491,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "road",
@@ -485,6 +510,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "settlement",
@@ -503,6 +529,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "road",
@@ -521,6 +548,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "settlement",
@@ -539,6 +567,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 1,
+    resourceMultiplyer: "",
   },
   {
     type: "road",
@@ -557,6 +586,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "settlement",
@@ -575,6 +605,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 1,
+    resourceMultiplyer: "",
   },
   {
     type: "road",
@@ -593,6 +624,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "settlement",
@@ -611,6 +643,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -629,6 +662,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -647,6 +681,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -665,6 +700,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -683,6 +719,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -701,6 +738,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -719,6 +757,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -737,6 +776,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -755,6 +795,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -773,6 +814,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -791,6 +833,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -809,6 +852,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -827,6 +871,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -845,6 +890,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -863,6 +909,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -881,6 +928,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -899,6 +947,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -917,6 +966,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -935,6 +985,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -953,6 +1004,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -971,6 +1023,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -989,6 +1042,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1007,6 +1061,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1025,6 +1080,7 @@ export const blueStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
 ]
 
@@ -1046,6 +1102,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1064,6 +1121,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1082,6 +1140,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1100,6 +1159,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1118,6 +1178,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1136,6 +1197,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1154,6 +1216,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1172,6 +1235,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1190,6 +1254,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1208,6 +1273,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1226,6 +1292,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1244,6 +1311,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1262,6 +1330,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1280,6 +1349,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1298,6 +1368,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1316,6 +1387,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1334,6 +1406,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1352,6 +1425,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1370,6 +1444,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1388,6 +1463,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1406,6 +1482,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1424,6 +1501,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1442,6 +1520,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "settlement",
@@ -1460,6 +1539,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "road",
@@ -1478,6 +1558,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "settlement",
@@ -1496,6 +1577,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "road",
@@ -1514,6 +1596,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "settlement",
@@ -1532,6 +1615,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 1,
+    resourceMultiplyer: "",
   },
   {
     type: "road",
@@ -1550,6 +1634,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "settlement",
@@ -1568,6 +1653,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 1,
+    resourceMultiplyer: "",
   },
   {
     type: "road",
@@ -1586,6 +1672,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "settlement",
@@ -1604,6 +1691,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1622,6 +1710,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1640,6 +1729,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1658,6 +1748,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1676,6 +1767,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1694,6 +1786,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1712,6 +1805,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1730,6 +1824,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1748,6 +1843,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1766,6 +1862,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1784,6 +1881,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1802,6 +1900,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "region",
@@ -1820,6 +1919,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1838,6 +1938,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1856,6 +1957,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1874,6 +1976,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1892,6 +1995,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1910,6 +2014,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1928,6 +2033,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1946,6 +2052,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -1964,6 +2071,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -1982,6 +2090,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "build",
@@ -2000,6 +2109,7 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
   {
     type: "none",
@@ -2018,7 +2128,6 @@ export const redStartingCards: CardDefinition[] = [
     progressPoints: 0,
     skillPoints: 0,
     victoryPoints: 0,
+    resourceMultiplyer: "",
   },
 ]
-
-export const actionDice = ["year of plenty", "trade advantage", ""]

@@ -46,10 +46,10 @@ body {
 
 /* center cards */
 .centerCards {
-  height: 8vh;
-  width: 72vh;
+  height: 10vh;
+  width: 58vh;
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(1, 1fr);
   justify-content: center;
   justify-items: center;

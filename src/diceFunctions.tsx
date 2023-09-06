@@ -1,14 +1,12 @@
-export const productionDice = []
-
 export const eventDice = [
-  "Question",
-  "Question",
-  "Brigand",
-  "Trade Advantage",
-  "Skill Advantage",
-  "Year of Plenty",
+  "brigand attack",
+  "trade",
+  "plentiful harvest",
+  "celebration",
+  "event card",
+  "event card",
 ]
 
 export function diceRoll() {
-  const rollNumber = Math.ceil(Math.random() * 6)
+  return Math.ceil(Math.random() * 6)
 }
