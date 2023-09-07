@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
 
+import harp from "./cards/eventHarp.png"
+
 import city from "./Cards/other/city-back.jpg"
 import blueRoad from "./cards/blue-player/blue-road.jpg"
 import blueSettlement from "./cards/blue-player/blue-settlement.jpg"
@@ -20,7 +22,12 @@ import {
   redStartingCards,
 } from "./startingCards.tsx"
 
-import { diceRoll, eventDice } from "./diceFunctions.tsx"
+import {
+  productionRoll,
+  eventRoll,
+  EventDie,
+  ProductionDie,
+} from "./diceFunctions.tsx"
 
 interface ResourceTracker {
   lumber: number
@@ -130,9 +137,13 @@ const startBuildBasic: StartBuildBasic = {
 }
 
 function App() {
+  // advantages
+  const [tradeAdvantage, setTradeAdvantage] = useState<string>("")
+  const [strengthAdvantage, setStrengthAdvantage] = useState<string>("")
+
   // dice
-  const [productionDie, setProductionDie] = useState<number>(0)
-  const [eventDie, setEventDie] = useState<string>("")
+  const [productionDie, setProductionDie] = useState<ProductionDie>()
+  const [eventDie, setEventDie] = useState<EventDie>()
 
   // cards setup
   const [centerCards, setCenterCards] = useState<CenterCard[]>(startCenterCards)
@@ -337,7 +348,7 @@ function App() {
 
           if (blueCards[index + 11].display === "no") {
             buildTiles.push(index + 11)
-          } else {
+          } else if (blueCards[index + 22].display === "no") {
             buildTiles.push(index + 22)
           }
         }
@@ -363,7 +374,7 @@ function App() {
 
           if (redCards[index + 11].display === "no") {
             buildTiles.push(index + 11)
-          } else {
+          } else if (redCards[index + 22].display === "no") {
             buildTiles.push(index + 22)
           }
         }
@@ -388,6 +399,36 @@ function App() {
       return newArray
     })
   }, [blueCards, redCards])
+
+  useEffect(() => {
+    setTradeAdvantage(tradeAdvantage => {
+      if (
+        (blueResources.commercePoints >= 3 ||
+          redResources.commercePoints >= 3) &&
+        blueResources.commercePoints !== redResources.commercePoints
+      ) {
+        tradeAdvantage =
+          blueResources.commercePoints > redResources.commercePoints
+            ? "blue"
+            : "red"
+      }
+      return tradeAdvantage
+    })
+
+    setStrengthAdvantage(strengthAdvantage => {
+      if (
+        (blueResources.strengthPoints >= 3 ||
+          redResources.strengthPoints >= 3) &&
+        blueResources.strengthPoints !== redResources.strengthPoints
+      ) {
+        strengthAdvantage =
+          blueResources.strengthPoints > redResources.strengthPoints
+            ? "blue"
+            : "red"
+      }
+      return strengthAdvantage
+    })
+  }, [blueResources, redResources])
 
   function payResource(card: CardDefinition) {
     setBlueCards(cards => {
@@ -697,8 +738,8 @@ function App() {
   }
 
   function rollDice() {
-    const productionDie = diceRoll()
-    const eventDie = eventDice[diceRoll() - 1]
+    const productionDie = productionRoll()
+    const eventDie = eventRoll()
 
     setProductionDie(productionDie)
     setEventDie(eventDie)
@@ -730,10 +771,38 @@ function App() {
         return card
       })
     })
+
+    resolveEventDice(eventDie.name)
   }
 
-  console.log(blueCards)
-  console.log(centerCards)
+  function resolveEventDice(event: string) {
+    if (event === "brigand attack") {
+      // brigand attack
+    }
+
+    if (event === "trade") {
+      if (tradeAdvantage === "") return
+      // addResource()
+    }
+
+    if (event === "plentiful harvest") {
+      // plentiful harvest
+      // addResource()
+    }
+
+    if (event === "celebration") {
+      // celebration
+      // addResource()
+    }
+
+    if (event === "event card") {
+      eventCard()
+    }
+  }
+
+  function eventCard() {
+    console.log("perform event")
+  }
 
   return (
     <>
@@ -890,15 +959,22 @@ function App() {
           <button className="end-turn" onClick={startGame}>
             Start Game
           </button>
+          <button className="end-turn">Trade</button>
+
           <button className="end-turn" onClick={endTurn}>
             End Turn
           </button>
           <button className="end-turn" onClick={rollDice}>
             Roll Dice
           </button>
-          <button className="end-turn" onClick={rollDice}>
-            Trade
-          </button>
+          <div
+            className="dice"
+            style={{ backgroundImage: `url(${eventDie?.image})` }}
+          ></div>
+          <div
+            className="dice"
+            style={{ backgroundImage: `url(${productionDie?.image})` }}
+          ></div>
         </div>
       </div>
     </>

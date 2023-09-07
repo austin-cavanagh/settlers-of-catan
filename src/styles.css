@@ -113,7 +113,7 @@ body {
 }
 
 .statsBar {
-  height: 500px;
+  height: 800px;
   width: 200px;
   margin-bottom: 40px;
   display: flex;
@@ -152,6 +152,23 @@ body {
   height: 30px;
   width: 80px;
   margin-top: 10px;
+}
+
+.dice {
+  height: 100px;
+  width: 100px;
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  border-radius: 8%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 1s ease;
+  background-color: transparent;
+  border: 5px solid black;
+  margin-top: 20px;
 }
 
 .blue {
