@@ -126,32 +126,43 @@ const startSettlements: number[] = [27, 29]
 
 const startOpenBuildTiles: number[] = [16, 18, 38, 40]
 
+interface Resources {
+  lumber: number
+  gold: number
+  grain: number
+  brick: number
+  wool: number
+  ore: number
+}
+
 interface StartBuildBasic {
   active: string
   possibleMoves: number[]
   card: CardStats | undefined
+  cost: Resources
 }
 
 const startBuildBasic: StartBuildBasic = {
   active: "",
   possibleMoves: [],
   card: undefined,
+  cost: {
+    lumber: 0,
+    gold: 0,
+    grain: 0,
+    brick: 0,
+    wool: 0,
+    ore: 0,
+  },
 }
 
-interface Cost {
-  brick: number
-  gold: number
-  grain: number
-  lumber: number
-  ore: number
-}
-
-const startCost: Cost = {
+const startCost: Resources = {
   brick: 0,
   gold: 0,
   grain: 0,
   lumber: 0,
   ore: 0,
+  wool: 0,
 }
 
 interface VictoryPointsTracker {
@@ -164,13 +175,29 @@ const startVictoryPoints: VictoryPointsTracker = {
   blue: 2,
 }
 
+interface PayState {
+  total: number
+  cost: Resources
+  colors: number[]
+  possibleMoves: number[]
+}
+
+const StartPayState: PayState = {
+  total: 0,
+  cost: startCost,
+  colors: [],
+  possibleMoves: [],
+}
+
 function App() {
+  const [payState, setPayState] = useState<PayState>(StartPayState)
+
   // vitory points
   const [victoryPointsTracker, setVictoryPointsTracker] =
     useState<VictoryPointsTracker>(startVictoryPoints)
 
   // resources
-  const [buildingCost, setBuildingCost] = useState<Cost>(startCost)
+  const [buildingCost, setBuildingCost] = useState<Resources>(startCost)
 
   // advantages
   const [tradeAdvantage, setTradeAdvantage] = useState<string>("")
@@ -197,9 +224,12 @@ function App() {
 
   const [regionCards, setRegionCards] = useState<RegionCard[]>(startRegionCards)
 
-  // red player
+  // tile color states
   const [blueColors, setBlueColors] = useState<string[]>(startColors)
   const [redColors, setRedColors] = useState<string[]>(startColors)
+  const [blueRegionColors, setBlueRegionColors] =
+    useState<string[]>(startColors)
+  const [redRegionColors, setRedRegionColors] = useState<string[]>(startColors)
 
   // variables for selecting and placing cards
   const [buildMode, setBuildMode] = useState<BuildMode>(startBuildMode)
@@ -480,9 +510,35 @@ function App() {
     })
   }, [strengthAdvantage, tradeAdvantage])
 
-  function payResource(card: CardDefinition) {
-    setBlueCards(cards => {
-      return cards.map(currCard => {
+  function selectPayResource(card: CardDefinition) {
+    const playerCards = turn === "blue" ? blueCards : redCards
+    const setPlayerCards = turn === "blue" ? setBlueCards : setRedCards
+    const resourcePaid = card.resourceType
+
+    const index = card.index
+
+    setPayState(payState => {
+      return {
+        ...payState,
+        total: payState.total - 1,
+        cost: {
+          ...payState.cost,
+          [card.resourceType]: payState.cost[card.resourceType] - 1,
+        },
+        possibleMoves: [],
+      }
+    })
+
+    setBlueRegionColors(blueRegionColors => {
+      const updatedColors = [...blueRegionColors]
+      updatedColors[index] = "transparent"
+      return updatedColors
+    })
+
+    // console.log(payState.colors)
+
+    setPlayerCards(playerCards => {
+      return playerCards.map(currCard => {
         if (card === currCard) {
           if (currCard.rotation === currCard.minRotation) {
             return card
@@ -519,10 +575,12 @@ function App() {
     if (playerResources.ore < cost.ore) return
     if (playerResources.wool < cost.wool) return
 
+    // set building details
     setBuildBasic(buildBasic => {
       buildBasic.active = turn
       buildBasic.card = card
       buildBasic.possibleMoves = possibleMovesByColor
+      buildBasic.cost = cost
       return buildBasic
     })
 
@@ -669,8 +727,75 @@ function App() {
       buildBasic.active = ""
       buildBasic.card = undefined
       buildBasic.possibleMoves = []
+      buildBasic.cost = {
+        lumber: 0,
+        gold: 0,
+        grain: 0,
+        brick: 0,
+        wool: 0,
+        ore: 0,
+      }
       return buildBasic
     })
+  }
+
+  function findPossibleTiles(cost) {
+    const playerCards = turn === "blue" ? blueCards : redCards
+    const possibleTiles: number[] = []
+
+    Object.entries(cost).forEach(([resource, amount]: [string, number]) => {
+      if (amount > 0) {
+        // prompt user to select resource to pay
+        // find possible tiles to click based on if they have resources
+        blueCards.forEach((card, index) => {
+          if (card.resourceType === resource && card.resourceCount > 0) {
+            possibleTiles.push(index)
+          }
+        })
+      }
+    })
+
+    return possibleTiles
+  }
+
+  function payResources() {
+    const playerCards = turn === "blue" ? blueCards : redCards
+    const newColors = new Array(55).fill("transparent")
+    const cost = buildBasic.cost
+    const totalCost = Object.values(cost).reduce(
+      (acc, currval) => acc + currval,
+      0
+    )
+    const possibleTiles: number[] = []
+
+    Object.entries(cost).forEach(([resource, amount]: [string, number]) => {
+      if (amount > 0) {
+        // prompt user to select resource to pay
+        // find possible tiles to click based on if they have resources
+        blueCards.forEach((card, index) => {
+          if (card.resourceType === resource && card.resourceCount > 0) {
+            possibleTiles.push(index)
+            newColors[index] = "green"
+          }
+        })
+      }
+    })
+
+    console.log(possibleTiles)
+    const test = findPossibleTiles(cost)
+    console.log(test)
+
+    setPayState(payState => {
+      payState.cost = cost
+      payState.total = totalCost
+      payState.colors = newColors
+      payState.possibleMoves = possibleTiles
+      return payState
+    })
+
+    turn === "blue"
+      ? setBlueRegionColors(newColors)
+      : setRedRegionColors(newColors)
   }
 
   function buildCard(index: number) {
@@ -686,6 +811,8 @@ function App() {
       buildBasic.active === turn &&
       buildBasic.possibleMoves.includes(index)
     ) {
+      payResources()
+
       setCurrCards(
         currCards.map((card, currIndex) => {
           if (index === currIndex) {
@@ -777,7 +904,7 @@ function App() {
           currCards[moves[1]].resourceType = regionCard2?.resourceType
           currCards[moves[1]].diceNumber = regionCard2?.diceNumber
           currCards[moves[1]].image = regionCard2?.image
-          currCards[moves[0]].display = "yes"
+          currCards[moves[1]].display = "yes"
           return currCards
         })
       }
@@ -932,7 +1059,7 @@ function App() {
     // perform event
   }
 
-  console.log(victoryPointsTracker)
+  // console.log(payState)
 
   return (
     <>
@@ -966,7 +1093,15 @@ function App() {
                     style={{
                       backgroundImage: `url(${card.image})`,
                       transform: `rotate(${card.rotation}deg)`,
-                      outline: `5px solid ${redColors[index]}`,
+                      outline: `5px solid ${redRegionColors[index]}`,
+                      cursor: `${
+                        redRegionColors[index] === "green"
+                          ? "pointer"
+                          : "default"
+                      }`,
+                    }}
+                    onClick={() => {
+                      if (payState.total > 0) selectPayResource(card)
                     }}
                   ></div>
                 )
@@ -983,6 +1118,9 @@ function App() {
                   style={{
                     backgroundImage: `url(${card.image})`,
                     outline: `5px solid ${redColors[index]}`,
+                    cursor: `${
+                      redColors[index] === "green" ? "pointer" : "default"
+                    }`,
                   }}
                 >
                   {` ${card.index} ${card.type}`}
@@ -1023,7 +1161,15 @@ function App() {
                     style={{
                       backgroundImage: `url(${card.image})`,
                       transform: `rotate(${card.rotation}deg)`,
-                      outline: `5px solid ${blueColors[index]}`,
+                      outline: `5px solid ${blueRegionColors[index]}`,
+                      cursor: `${
+                        blueRegionColors[index] === "green"
+                          ? "pointer"
+                          : "default"
+                      }`,
+                    }}
+                    onClick={() => {
+                      if (payState.total > 0) selectPayResource(card)
                     }}
                   ></div>
                 )
@@ -1040,6 +1186,9 @@ function App() {
                   style={{
                     backgroundImage: `url(${card.image})`,
                     outline: `5px solid ${blueColors[index]}`,
+                    cursor: `${
+                      blueColors[index] === "green" ? "pointer" : "default"
+                    }`,
                   }}
                 >
                   {` ${card.index} ${card.type}`}

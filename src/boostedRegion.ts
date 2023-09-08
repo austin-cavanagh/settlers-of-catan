@@ -8,6 +8,7 @@ export function boostedRegion(playerCards: CardDefinition[]) {
 
   playerCards.forEach((card, index) => {
     if (leftRegions.includes(index) && card.display === "yes") {
+      console.log(index)
       if (card.resourceType === playerCards[index + 1].resourceMultiplyer) {
         boostedRegions.push(index)
       }

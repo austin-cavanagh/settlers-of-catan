@@ -19,7 +19,7 @@ import redWood from "./cards/red-player/red-wood.jpg"
 export interface CardDefinition {
   type: string // might remove, change to card name
   display: string // might remove
-  resourceType: string | undefined
+  resourceType: string
   resourceCount: number
   diceNumber: number | undefined
   index: number
