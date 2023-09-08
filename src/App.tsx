@@ -517,6 +517,8 @@ function App() {
 
     const index = card.index
 
+    // store the cost on the possible moves
+
     setPayState(payState => {
       return {
         ...payState,
@@ -739,24 +741,11 @@ function App() {
     })
   }
 
-  function findPossibleTiles(cost) {
-    const playerCards = turn === "blue" ? blueCards : redCards
-    const possibleTiles: number[] = []
-
-    Object.entries(cost).forEach(([resource, amount]: [string, number]) => {
-      if (amount > 0) {
-        // prompt user to select resource to pay
-        // find possible tiles to click based on if they have resources
-        blueCards.forEach((card, index) => {
-          if (card.resourceType === resource && card.resourceCount > 0) {
-            possibleTiles.push(index)
-          }
-        })
-      }
-    })
-
-    return possibleTiles
-  }
+  // the set function can hold the cost, possible moves
+  // possibleMoves
+  // colors
+  // cost
+  //
 
   function payResources() {
     const playerCards = turn === "blue" ? blueCards : redCards
@@ -780,10 +769,6 @@ function App() {
         })
       }
     })
-
-    console.log(possibleTiles)
-    const test = findPossibleTiles(cost)
-    console.log(test)
 
     setPayState(payState => {
       payState.cost = cost
