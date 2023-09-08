@@ -29,6 +29,8 @@ import {
   ProductionDie,
 } from "./diceFunctions.tsx"
 
+import { boostedRegion } from "./boostedRegion.ts"
+
 interface ResourceTracker {
   lumber: number
   gold: number
@@ -136,7 +138,40 @@ const startBuildBasic: StartBuildBasic = {
   card: undefined,
 }
 
+interface Cost {
+  brick: number
+  gold: number
+  grain: number
+  lumber: number
+  ore: number
+}
+
+const startCost: Cost = {
+  brick: 0,
+  gold: 0,
+  grain: 0,
+  lumber: 0,
+  ore: 0,
+}
+
+interface VictoryPointsTracker {
+  red: number
+  blue: number
+}
+
+const startVictoryPoints: VictoryPointsTracker = {
+  red: 2,
+  blue: 2,
+}
+
 function App() {
+  // vitory points
+  const [victoryPointsTracker, setVictoryPointsTracker] =
+    useState<VictoryPointsTracker>(startVictoryPoints)
+
+  // resources
+  const [buildingCost, setBuildingCost] = useState<Cost>(startCost)
+
   // advantages
   const [tradeAdvantage, setTradeAdvantage] = useState<string>("")
   const [strengthAdvantage, setStrengthAdvantage] = useState<string>("")
@@ -157,8 +192,8 @@ function App() {
   const [collectResources, setCollectResources] = useState<boolean>(false)
 
   // player cards
-  const [blueHand, setBlueHand] = useState(blueStartHand)
-  const [redHand, setRedHand] = useState(redStartHand)
+  const [blueHand, setBlueHand] = useState<CardStats[]>(blueStartHand)
+  const [redHand, setRedHand] = useState<CardStats[]>(redStartHand)
 
   const [regionCards, setRegionCards] = useState<RegionCard[]>(startRegionCards)
 
@@ -430,6 +465,21 @@ function App() {
     })
   }, [blueResources, redResources])
 
+  useEffect(() => {
+    setVictoryPointsTracker(victoryPointsTracker => {
+      victoryPointsTracker.blue = blueResources.victoryPoints
+      victoryPointsTracker.red = redResources.victoryPoints
+
+      if (tradeAdvantage === "blue") victoryPointsTracker.blue++
+      if (tradeAdvantage === "red") victoryPointsTracker.red++
+
+      if (strengthAdvantage === "blue") victoryPointsTracker.blue++
+      if (strengthAdvantage === "red") victoryPointsTracker.red++
+
+      return victoryPointsTracker
+    })
+  }, [strengthAdvantage, tradeAdvantage])
+
   function payResource(card: CardDefinition) {
     setBlueCards(cards => {
       return cards.map(currCard => {
@@ -449,6 +499,25 @@ function App() {
     const newColors = new Array(55).fill("transparent")
     const possibleMovesByColor =
       turn === "blue" ? blueOpenBuildTiles : redOpenBuildTiles
+    const playerResources = turn === "blue" ? blueResources : redResources
+
+    // calculating cost of the item
+    const cost = {
+      brick: card.brick,
+      gold: card.gold,
+      grain: card.grain,
+      lumber: card.lumber,
+      ore: card.ore,
+      wool: card.wool,
+    }
+
+    // return if not enough resources
+    if (playerResources.brick < cost.brick) return
+    if (playerResources.gold < cost.gold) return
+    if (playerResources.grain < cost.grain) return
+    if (playerResources.lumber < cost.lumber) return
+    if (playerResources.ore < cost.ore) return
+    if (playerResources.wool < cost.wool) return
 
     setBuildBasic(buildBasic => {
       buildBasic.active = turn
@@ -465,27 +534,44 @@ function App() {
   }
 
   function selectedCenterCard(stack: CenterCard) {
-    // declare variables that update based on turn
+    // resets build states
+    resetBuildModes()
+
     const OpenExpandTiles =
       turn === "blue" ? blueOpenExpandTiles : redOpenExpandTiles
     const currSettlements = turn === "blue" ? blueSettlements : redSettlements
-
-    // RESET EACH BUILD FUNCTION EACH TIME WE RUN THE FUNCTION
-    resetBuildModes()
-
-    // create outside function that can be called to reset all
-
+    const playerResources = turn === "blue" ? blueResources : redResources
     const building = stack.cardStack
-
-    // create new color array and set all colors to transparent
     const newColors = new Array(55).fill("transparent")
 
-    // building basic cards
-    if (building.slice(0, 5) === "basic") {
-      // update the length of each basic stack
+    // calculating cost of the item
+    const cost = {
+      brick: stack.cardsInStack[0].brick,
+      gold: stack.cardsInStack[0].gold,
+      grain: stack.cardsInStack[0].grain,
+      lumber: stack.cardsInStack[0].lumber,
+      ore: stack.cardsInStack[0].ore,
+      wool: stack.cardsInStack[0].wool,
     }
 
-    // if stack is a road
+    // return if not enough resources
+    if (playerResources.brick < cost.brick) return
+    if (playerResources.gold < cost.gold) return
+    if (playerResources.grain < cost.grain) return
+    if (playerResources.lumber < cost.lumber) return
+    if (playerResources.ore < cost.ore) return
+    if (playerResources.wool < cost.wool) return
+
+    setBuildingCost(buildingCost => {
+      buildingCost.brick = stack.cardsInStack[0].brick
+      buildingCost.gold = stack.cardsInStack[0].gold
+      buildingCost.grain = stack.cardsInStack[0].grain
+      buildingCost.lumber = stack.cardsInStack[0].lumber
+      buildingCost.ore = stack.cardsInStack[0].ore
+      return buildingCost
+    })
+
+    // if road
     if (
       building === "road" &&
       (OpenExpandTiles.left.building === "road" ||
@@ -511,7 +597,7 @@ function App() {
       })
     }
 
-    // if stack is a settlement
+    // if settlement
     if (
       building === "settlement" &&
       (OpenExpandTiles.left.building === "settlement" ||
@@ -537,7 +623,7 @@ function App() {
       })
     }
 
-    // if stack is a city
+    // if city
     if (building === "city" && currSettlements.length !== 0) {
       const possibleMoves: number[] = currSettlements
       possibleMoves.forEach(move => {
@@ -557,6 +643,15 @@ function App() {
   }
 
   function resetBuildModes() {
+    setBuildingCost(buildingCost => {
+      buildingCost.brick = 0
+      buildingCost.gold = 0
+      buildingCost.grain = 0
+      buildingCost.lumber = 0
+      buildingCost.ore = 0
+      return buildingCost
+    })
+
     setBuildMode(buildMode => {
       buildMode.active = ""
       buildMode.buildingType = ""
@@ -581,7 +676,6 @@ function App() {
   function buildCard(index: number) {
     const currCards = turn === "blue" ? blueCards : redCards
     const setCurrCards = turn === "blue" ? setBlueCards : setRedCards
-    const playerHand = turn === "blue" ? blueHand : redHand
     const setPlayerHand = turn === "blue" ? setBlueHand : setRedHand
 
     // reset colors back to default
@@ -657,7 +751,8 @@ function App() {
         setRegionCards(regionCards)
 
         // check if regions go on left or right
-        let direction = currCards[index - 2].display === "no" ? "left" : "right"
+        let direction =
+          currCards[index + 1].buildingType === "road" ? "left" : "right"
 
         // determine tiles to place regions
         let moves: number[] = []
@@ -676,11 +771,13 @@ function App() {
           currCards[moves[0]].resourceType = regionCard1?.resourceType
           currCards[moves[0]].diceNumber = regionCard1?.diceNumber
           currCards[moves[0]].image = regionCard1?.image
+          currCards[moves[0]].display = "yes"
 
           currCards[moves[1]].buildingType = regionCard2?.buildingType
           currCards[moves[1]].resourceType = regionCard2?.resourceType
           currCards[moves[1]].diceNumber = regionCard2?.diceNumber
           currCards[moves[1]].image = regionCard2?.image
+          currCards[moves[0]].display = "yes"
           return currCards
         })
       }
@@ -739,19 +836,37 @@ function App() {
 
   function rollDice() {
     const productionDie = productionRoll()
-    const eventDie = eventRoll()
-
     setProductionDie(productionDie)
+
+    const eventDie = eventRoll()
     setEventDie(eventDie)
 
+    // loop over region cards and determine which of them are recieving a bonus
+    const blueBoostedRegion = boostedRegion(blueCards)
+    const redBoostedRegion = boostedRegion(redCards)
+
+    // update both player cards
     setBlueCards(blueCards => {
-      return blueCards.map(card => {
-        if (card.diceNumber === productionDie) {
+      return blueCards.map((card, index) => {
+        if (
+          blueBoostedRegion.includes(index) &&
+          card.diceNumber === productionDie.number
+        ) {
+          if (card.rotation === card.maxRotation) {
+            return card
+          }
+
+          card.resourceCount++
+          card.rotation = card.rotation - 90
+        }
+
+        if (card.diceNumber === productionDie.number) {
           if (card.rotation === card.maxRotation) {
             return card
           }
           card.resourceCount++
-          return { ...card, rotation: card.rotation - 90 }
+          card.rotation = card.rotation - 90
+          return card
         }
 
         return card
@@ -759,13 +874,26 @@ function App() {
     })
 
     setRedCards(redCards => {
-      return redCards.map(card => {
-        if (card.diceNumber === productionDie) {
+      return redCards.map((card, index) => {
+        if (
+          redBoostedRegion.includes(index) &&
+          card.diceNumber === productionDie.number
+        ) {
+          if (card.rotation === card.maxRotation) {
+            return card
+          }
+
+          card.resourceCount++
+          card.rotation = card.rotation - 90
+        }
+
+        if (card.diceNumber === productionDie.number) {
           if (card.rotation === card.maxRotation) {
             return card
           }
           card.resourceCount++
-          return { ...card, rotation: card.rotation - 90 }
+          card.rotation = card.rotation - 90
+          return card
         }
 
         return card
@@ -801,8 +929,10 @@ function App() {
   }
 
   function eventCard() {
-    console.log("perform event")
+    // perform event
   }
+
+  console.log(victoryPointsTracker)
 
   return (
     <>
