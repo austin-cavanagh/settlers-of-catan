@@ -84,6 +84,7 @@ interface BuildMode {
   commercePoints: number
   strengthPoints: number
   image: string
+  cost: Resources
 }
 
 const startBuildMode: BuildMode = {
@@ -96,6 +97,14 @@ const startBuildMode: BuildMode = {
   commercePoints: 0,
   strengthPoints: 0,
   image: "",
+  cost: {
+    lumber: 0,
+    gold: 0,
+    grain: 0,
+    brick: 0,
+    wool: 0,
+    ore: 0,
+  },
 }
 
 interface BuildRegion {
@@ -127,12 +136,7 @@ const startSettlements: number[] = [27, 29]
 const startOpenBuildTiles: number[] = [16, 18, 38, 40]
 
 interface Resources {
-  lumber: number
-  gold: number
-  grain: number
-  brick: number
-  wool: number
-  ore: number
+  [resource: string]: number
 }
 
 interface StartBuildBasic {
@@ -175,17 +179,24 @@ const startVictoryPoints: VictoryPointsTracker = {
   blue: 2,
 }
 
+interface Moves {
+  [index: number]: {
+    resource: string
+    amount: number
+  }
+}
+
 interface PayState {
   total: number
   cost: Resources
-  colors: number[]
   possibleMoves: number[]
 }
+
+// possible moves  [ { amount: 0, index: ?, resource: lumber  } ]
 
 const StartPayState: PayState = {
   total: 0,
   cost: startCost,
-  colors: [],
   possibleMoves: [],
 }
 
@@ -513,31 +524,8 @@ function App() {
   function selectPayResource(card: CardDefinition) {
     const playerCards = turn === "blue" ? blueCards : redCards
     const setPlayerCards = turn === "blue" ? setBlueCards : setRedCards
-    const resourcePaid = card.resourceType
-
-    const index = card.index
-
-    // store the cost on the possible moves
-
-    setPayState(payState => {
-      return {
-        ...payState,
-        total: payState.total - 1,
-        cost: {
-          ...payState.cost,
-          [card.resourceType]: payState.cost[card.resourceType] - 1,
-        },
-        possibleMoves: [],
-      }
-    })
-
-    setBlueRegionColors(blueRegionColors => {
-      const updatedColors = [...blueRegionColors]
-      updatedColors[index] = "transparent"
-      return updatedColors
-    })
-
-    // console.log(payState.colors)
+    const setPlayerRegionColors =
+      turn === "blue" ? setBlueRegionColors : setRedRegionColors
 
     setPlayerCards(playerCards => {
       return playerCards.map(currCard => {
@@ -551,6 +539,38 @@ function App() {
         return currCard
       })
     })
+
+    const resourceType = card.resourceType
+    const newColors = new Array(55).fill("transparent")
+    const possibleTiles: number[] = []
+    // lower the cost of the paid resource
+    const cost = payState.cost
+    cost[resourceType]--
+
+    Object.entries(cost).forEach(([resource, amount]: [string, number]) => {
+      if (amount > 0) {
+        playerCards.forEach((card, index) => {
+          if (card.resourceType === resource && card.resourceCount > 0) {
+            possibleTiles.push(index)
+            newColors[index] = "green"
+          }
+        })
+      }
+    })
+
+    setPayState(payState => {
+      return {
+        ...payState,
+        total: payState.total - 1,
+        cost: {
+          ...payState.cost,
+          resourceType: payState.cost[resourceType]--,
+        },
+        possibleMoves: possibleTiles,
+      }
+    })
+
+    setPlayerRegionColors(newColors)
   }
 
   function selectCardFromHand(card: CardStats) {
@@ -647,14 +667,19 @@ function App() {
         newColors[OpenExpandTiles.right.index] = "green"
         possibleMoves.push(OpenExpandTiles.right.index)
       }
-      setBuildMode(buildMode => {
-        buildMode.active = turn
-        buildMode.buildingType = building
-        buildMode.possibleMoves = possibleMoves
-        buildMode.victoryPoints = 0
-        buildMode.image = blueRoad
-        return buildMode
-      })
+      setBuildMode(buildMode => ({
+        ...buildMode,
+        active: turn,
+        buildingType: building,
+        possibleMoves: possibleMoves,
+        victoryPoints: 0,
+        image: blueRoad,
+        cost: {
+          ...buildMode.cost,
+          lumber: 1,
+          brick: 2,
+        },
+      }))
     }
 
     // if settlement
@@ -673,14 +698,22 @@ function App() {
         newColors[OpenExpandTiles.right.index] = "green"
         possibleMoves.push(OpenExpandTiles.right.index)
       }
-      setBuildMode(buildMode => {
-        buildMode.active = turn
-        buildMode.buildingType = building
-        buildMode.possibleMoves = possibleMoves
-        buildMode.victoryPoints = 1
-        buildMode.image = blueSettlement
-        return buildMode
-      })
+
+      setBuildMode(buildMode => ({
+        ...buildMode,
+        active: turn,
+        buildingType: building,
+        possibleMoves: possibleMoves,
+        victoryPoints: 1,
+        image: blueSettlement,
+        cost: {
+          ...buildMode.cost,
+          lumber: 1,
+          brick: 1,
+          grain: 1,
+          wool: 1,
+        },
+      }))
     }
 
     // if city
@@ -689,14 +722,19 @@ function App() {
       possibleMoves.forEach(move => {
         newColors[move] = "green"
       })
-      setBuildMode(buildMode => {
-        buildMode.active = turn
-        buildMode.buildingType = building
-        buildMode.possibleMoves = possibleMoves
-        buildMode.victoryPoints = 2
-        buildMode.image = city
-        return buildMode
-      })
+      setBuildMode(buildMode => ({
+        ...buildMode,
+        active: turn,
+        buildingType: building,
+        possibleMoves: possibleMoves,
+        victoryPoints: 2,
+        image: city,
+        cost: {
+          ...buildMode.cost,
+          grain: 2,
+          ore: 3,
+        },
+      }))
     }
 
     turn === "blue" ? setBlueColors(newColors) : setRedColors(newColors)
@@ -741,16 +779,10 @@ function App() {
     })
   }
 
-  // the set function can hold the cost, possible moves
-  // possibleMoves
-  // colors
-  // cost
-  //
-
-  function payResources() {
+  function setupPayState() {
     const playerCards = turn === "blue" ? blueCards : redCards
     const newColors = new Array(55).fill("transparent")
-    const cost = buildBasic.cost
+    const cost = buildMode.active === turn ? buildMode.cost : buildBasic.cost
     const totalCost = Object.values(cost).reduce(
       (acc, currval) => acc + currval,
       0
@@ -759,9 +791,7 @@ function App() {
 
     Object.entries(cost).forEach(([resource, amount]: [string, number]) => {
       if (amount > 0) {
-        // prompt user to select resource to pay
-        // find possible tiles to click based on if they have resources
-        blueCards.forEach((card, index) => {
+        playerCards.forEach((card, index) => {
           if (card.resourceType === resource && card.resourceCount > 0) {
             possibleTiles.push(index)
             newColors[index] = "green"
@@ -771,11 +801,12 @@ function App() {
     })
 
     setPayState(payState => {
-      payState.cost = cost
-      payState.total = totalCost
-      payState.colors = newColors
-      payState.possibleMoves = possibleTiles
-      return payState
+      return {
+        ...payState,
+        cost: cost,
+        total: totalCost,
+        possibleMoves: possibleTiles,
+      }
     })
 
     turn === "blue"
@@ -784,8 +815,8 @@ function App() {
   }
 
   function buildCard(index: number) {
-    const currCards = turn === "blue" ? blueCards : redCards
-    const setCurrCards = turn === "blue" ? setBlueCards : setRedCards
+    const playerCards = turn === "blue" ? blueCards : redCards
+    const setPlayerCards = turn === "blue" ? setBlueCards : setRedCards
     const setPlayerHand = turn === "blue" ? setBlueHand : setRedHand
 
     // reset colors back to default
@@ -796,10 +827,11 @@ function App() {
       buildBasic.active === turn &&
       buildBasic.possibleMoves.includes(index)
     ) {
-      payResources()
+      // function will setup the initial payState variable
+      setupPayState()
 
-      setCurrCards(
-        currCards.map((card, currIndex) => {
+      setPlayerCards(
+        playerCards.map((card, currIndex) => {
           if (index === currIndex) {
             const resourceBonus =
               buildBasic.card?.resourceBoost === true
@@ -838,8 +870,11 @@ function App() {
 
     // build expansion cards
     if (buildMode.active === turn && buildMode.possibleMoves.includes(index)) {
-      setCurrCards(
-        currCards.map((card, currIndex) => {
+      // function will setup the initial payState variable
+      setupPayState()
+
+      setPlayerCards(
+        playerCards.map((card, currIndex) => {
           // if we find the card update it
           if (index === currIndex) {
             return {
@@ -864,7 +899,7 @@ function App() {
 
         // check if regions go on left or right
         let direction =
-          currCards[index + 1].buildingType === "road" ? "left" : "right"
+          playerCards[index + 1].buildingType === "road" ? "left" : "right"
 
         // determine tiles to place regions
         let moves: number[] = []
@@ -878,19 +913,19 @@ function App() {
         }
 
         // update player cards with regions
-        setCurrCards(currCards => {
-          currCards[moves[0]].buildingType = regionCard1?.buildingType
-          currCards[moves[0]].resourceType = regionCard1?.resourceType
-          currCards[moves[0]].diceNumber = regionCard1?.diceNumber
-          currCards[moves[0]].image = regionCard1?.image
-          currCards[moves[0]].display = "yes"
+        setPlayerCards(playerCards => {
+          playerCards[moves[0]].buildingType = regionCard1?.buildingType
+          playerCards[moves[0]].resourceType = regionCard1?.resourceType
+          playerCards[moves[0]].diceNumber = regionCard1?.diceNumber
+          playerCards[moves[0]].image = regionCard1?.image
+          playerCards[moves[0]].display = "yes"
 
-          currCards[moves[1]].buildingType = regionCard2?.buildingType
-          currCards[moves[1]].resourceType = regionCard2?.resourceType
-          currCards[moves[1]].diceNumber = regionCard2?.diceNumber
-          currCards[moves[1]].image = regionCard2?.image
-          currCards[moves[1]].display = "yes"
-          return currCards
+          playerCards[moves[1]].buildingType = regionCard2?.buildingType
+          playerCards[moves[1]].resourceType = regionCard2?.resourceType
+          playerCards[moves[1]].diceNumber = regionCard2?.diceNumber
+          playerCards[moves[1]].image = regionCard2?.image
+          playerCards[moves[1]].display = "yes"
+          return playerCards
         })
       }
     }
@@ -1044,7 +1079,7 @@ function App() {
     // perform event
   }
 
-  // console.log(payState)
+  console.log(payState)
 
   return (
     <>
@@ -1059,7 +1094,9 @@ function App() {
                   backgroundImage: `url(${card.image})`,
                 }}
                 onClick={() => {
-                  selectCardFromHand(card)
+                  if (payState.possibleMoves.length === 0) {
+                    selectCardFromHand(card)
+                  }
                 }}
               ></div>
             )
@@ -1086,7 +1123,12 @@ function App() {
                       }`,
                     }}
                     onClick={() => {
-                      if (payState.total > 0) selectPayResource(card)
+                      if (
+                        payState.possibleMoves.includes(index) &&
+                        turn === "red"
+                      ) {
+                        selectPayResource(card)
+                      }
                     }}
                   ></div>
                 )
@@ -1096,16 +1138,18 @@ function App() {
                 <div
                   className="card red-letters"
                   key={index}
-                  onClick={() => {
-                    if (buildMode.active === "red") buildCard(index)
-                    if (buildBasic.active === "red") buildCard(index)
-                  }}
                   style={{
                     backgroundImage: `url(${card.image})`,
                     outline: `5px solid ${redColors[index]}`,
                     cursor: `${
                       redColors[index] === "green" ? "pointer" : "default"
                     }`,
+                  }}
+                  onClick={() => {
+                    if (payState.possibleMoves.length === 0) {
+                      if (buildMode.active === "red") buildCard(index)
+                      if (buildBasic.active === "red") buildCard(index)
+                    }
                   }}
                 >
                   {` ${card.index} ${card.type}`}
@@ -1123,12 +1167,15 @@ function App() {
                   key={index}
                   style={{ backgroundImage: `url(${stack.image})` }}
                   onClick={() => {
-                    if (
-                      stack.cardStack === "road" ||
-                      stack.cardStack === "settlement" ||
-                      stack.cardStack === "city"
-                    )
-                      selectedCenterCard(stack)
+                    if (payState.possibleMoves.length === 0) {
+                      if (
+                        stack.cardStack === "road" ||
+                        stack.cardStack === "settlement" ||
+                        stack.cardStack === "city"
+                      ) {
+                        selectedCenterCard(stack)
+                      }
+                    }
                   }}
                 ></div>
               )
@@ -1154,7 +1201,11 @@ function App() {
                       }`,
                     }}
                     onClick={() => {
-                      if (payState.total > 0) selectPayResource(card)
+                      if (
+                        payState.possibleMoves.includes(index) &&
+                        turn === "blue"
+                      )
+                        selectPayResource(card)
                     }}
                   ></div>
                 )
@@ -1164,16 +1215,18 @@ function App() {
                 <div
                   className="card"
                   key={index}
-                  onClick={() => {
-                    if (buildMode.active === "blue") buildCard(index)
-                    if (buildBasic.active === "blue") buildCard(index)
-                  }}
                   style={{
                     backgroundImage: `url(${card.image})`,
                     outline: `5px solid ${blueColors[index]}`,
                     cursor: `${
                       blueColors[index] === "green" ? "pointer" : "default"
                     }`,
+                  }}
+                  onClick={() => {
+                    if (payState.possibleMoves.length === 0) {
+                      if (buildMode.active === "blue") buildCard(index)
+                      if (buildBasic.active === "blue") buildCard(index)
+                    }
                   }}
                 >
                   {` ${card.index} ${card.type}`}
@@ -1220,15 +1273,45 @@ function App() {
               (turn === "blue" ? blueResources : redResources).skillPoints
             }`}</div>
           </div>
-          <button className="end-turn" onClick={startGame}>
+          <button
+            className="end-turn"
+            onClick={() => {
+              if (payState.possibleMoves.length === 0) {
+                startGame()
+              }
+            }}
+          >
             Start Game
           </button>
-          <button className="end-turn">Trade</button>
+          <button
+            className="end-turn"
+            onClick={() => {
+              if (payState.possibleMoves.length === 0) {
+                // trade
+              }
+            }}
+          >
+            Trade
+          </button>
 
-          <button className="end-turn" onClick={endTurn}>
+          <button
+            className="end-turn"
+            onClick={() => {
+              if (payState.possibleMoves.length === 0) {
+                endTurn()
+              }
+            }}
+          >
             End Turn
           </button>
-          <button className="end-turn" onClick={rollDice}>
+          <button
+            className="end-turn"
+            onClick={() => {
+              if (payState.possibleMoves.length === 0) {
+                rollDice()
+              }
+            }}
+          >
             Roll Dice
           </button>
           <div
