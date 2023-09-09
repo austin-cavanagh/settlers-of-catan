@@ -192,8 +192,6 @@ interface PayState {
   possibleMoves: number[]
 }
 
-// possible moves  [ { amount: 0, index: ?, resource: lumber  } ]
-
 const StartPayState: PayState = {
   total: 0,
   cost: startCost,
@@ -521,6 +519,7 @@ function App() {
     })
   }, [strengthAdvantage, tradeAdvantage])
 
+  // function that loops over when paying for a building
   function selectPayResource(card: CardDefinition) {
     const playerCards = turn === "blue" ? blueCards : redCards
     const setPlayerCards = turn === "blue" ? setBlueCards : setRedCards
@@ -558,19 +557,56 @@ function App() {
       }
     })
 
+    console.log({ ...payState.cost })
+
     setPayState(payState => {
       return {
         ...payState,
         total: payState.total - 1,
         cost: {
-          ...payState.cost,
-          resourceType: payState.cost[resourceType]--,
+          ...cost,
+          [resourceType]: cost[resourceType],
         },
         possibleMoves: possibleTiles,
       }
     })
 
     setPlayerRegionColors(newColors)
+  }
+
+  function setupPayState() {
+    const playerCards = turn === "blue" ? blueCards : redCards
+    const newColors = new Array(55).fill("transparent")
+    const cost = buildMode.active === turn ? buildMode.cost : buildBasic.cost
+    const totalCost = Object.values(cost).reduce(
+      (acc, currval) => acc + currval,
+      0
+    )
+    const possibleTiles: number[] = []
+
+    Object.entries(cost).forEach(([resource, amount]: [string, number]) => {
+      if (amount > 0) {
+        playerCards.forEach((card, index) => {
+          if (card.resourceType === resource && card.resourceCount > 0) {
+            possibleTiles.push(index)
+            newColors[index] = "green"
+          }
+        })
+      }
+    })
+
+    setPayState(payState => {
+      return {
+        ...payState,
+        cost: cost,
+        total: totalCost,
+        possibleMoves: possibleTiles,
+      }
+    })
+
+    turn === "blue"
+      ? setBlueRegionColors(newColors)
+      : setRedRegionColors(newColors)
   }
 
   function selectCardFromHand(card: CardStats) {
@@ -741,77 +777,51 @@ function App() {
   }
 
   function resetBuildModes() {
-    setBuildingCost(buildingCost => {
-      buildingCost.brick = 0
-      buildingCost.gold = 0
-      buildingCost.grain = 0
-      buildingCost.lumber = 0
-      buildingCost.ore = 0
-      return buildingCost
-    })
+    setBuildingCost(buildingCost => ({
+      ...buildingCost,
+      brick: 0,
+      gold: 0,
+      grain: 0,
+      lumber: 0,
+      ore: 0,
+      wool: 0,
+    }))
 
-    setBuildMode(buildMode => {
-      buildMode.active = ""
-      buildMode.buildingType = ""
-      buildMode.commercePoints = 0
-      buildMode.image = ""
-      buildMode.possibleMoves = []
-      buildMode.progressPoints = 0
-      buildMode.skillPoints = 0
-      buildMode.strengthPoints = 0
-      buildMode.victoryPoints
-      return buildMode
-    })
-
-    setBuildBasic(buildBasic => {
-      buildBasic.active = ""
-      buildBasic.card = undefined
-      buildBasic.possibleMoves = []
-      buildBasic.cost = {
+    setBuildMode(buildMode => ({
+      ...buildMode,
+      active: "",
+      buildingType: "",
+      commercePoints: 0,
+      image: "",
+      possibleMoves: [],
+      progressPoints: 0,
+      skillPoints: 0,
+      strengthPoints: 0,
+      victoryPoints: 0,
+      cost: {
         lumber: 0,
         gold: 0,
         grain: 0,
         brick: 0,
         wool: 0,
         ore: 0,
-      }
-      return buildBasic
-    })
-  }
+      },
+    }))
 
-  function setupPayState() {
-    const playerCards = turn === "blue" ? blueCards : redCards
-    const newColors = new Array(55).fill("transparent")
-    const cost = buildMode.active === turn ? buildMode.cost : buildBasic.cost
-    const totalCost = Object.values(cost).reduce(
-      (acc, currval) => acc + currval,
-      0
-    )
-    const possibleTiles: number[] = []
-
-    Object.entries(cost).forEach(([resource, amount]: [string, number]) => {
-      if (amount > 0) {
-        playerCards.forEach((card, index) => {
-          if (card.resourceType === resource && card.resourceCount > 0) {
-            possibleTiles.push(index)
-            newColors[index] = "green"
-          }
-        })
-      }
-    })
-
-    setPayState(payState => {
-      return {
-        ...payState,
-        cost: cost,
-        total: totalCost,
-        possibleMoves: possibleTiles,
-      }
-    })
-
-    turn === "blue"
-      ? setBlueRegionColors(newColors)
-      : setRedRegionColors(newColors)
+    setBuildBasic(buildBasic => ({
+      ...buildBasic,
+      active: "",
+      card: undefined,
+      possibleMoves: [],
+      cost: {
+        lumber: 0,
+        gold: 0,
+        grain: 0,
+        brick: 0,
+        wool: 0,
+        ore: 0,
+      },
+    }))
   }
 
   function buildCard(index: number) {
@@ -1079,7 +1089,7 @@ function App() {
     // perform event
   }
 
-  console.log(payState)
+  // console.log(payState)
 
   return (
     <>

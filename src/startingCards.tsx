@@ -1,3 +1,20 @@
+import blueBrick1 from "./cards-2/blue-player/blue-brick.png"
+import blueGold2 from "./cards-2/blue-player/blue-gold.png"
+import blueGrain2 from "./cards-2/blue-player/blue-grain.png"
+import blueLumber2 from "./cards-2/blue-player/blue-lumber.png"
+import blueOre2 from "./cards-2/blue-player/blue-ore.png"
+import blueWool from "./cards-2/blue-player/blue-wool.png"
+
+import redBrick1 from "./cards-2/red-player/red-brick.png"
+import redGold2 from "./cards-2/red-player/red-gold.png"
+import redGrain2 from "./cards-2/red-player/red-grain.png"
+import redLumber2 from "./cards-2/red-player/red-lumber.png"
+import redOre2 from "./cards-2/red-player/red-ore.png"
+import redWool from "./cards-2/red-player/red-wool.png"
+
+import road from "./cards-2/blue-player/road-back.png"
+import settlement from "./cards-2/blue-player/settlement-back.png"
+
 import blueBrick from "./cards/blue-player/blue-brick.jpg"
 import blueGold from "./cards/blue-player/blue-gold.jpg"
 import blueRoad from "./cards/blue-player/blue-road.jpg"
