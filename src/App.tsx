@@ -12,7 +12,7 @@ import lumberIcon from "./icons/lumber-icon.png"
 import oreIcon from "./icons/ore-icon.png"
 import woolIcon from "./icons/wool-icon.png"
 
-const iconArray: string[] = [
+const blueIconArray: string[] = [
   victoryIcon,
   strengthIcon,
   commerceIcon,
@@ -26,7 +26,9 @@ const iconArray: string[] = [
   goldIcon,
 ]
 
-const resourceArray: string[] = [
+const redIconArray: string[] = [...blueIconArray].reverse()
+
+const blueResourceArray: string[] = [
   "victoryPoints",
   "strengthPoints",
   "commercePoints",
@@ -39,6 +41,8 @@ const resourceArray: string[] = [
   "ore",
   "gold",
 ]
+
+const redResourceArray: string[] = [...blueResourceArray].reverse()
 
 import woodBackground from "./wood-texture-1.avif"
 import wood2 from "./wood2.jpeg"
@@ -1138,16 +1142,16 @@ function App() {
       <div className="window" style={{ backgroundImage: `url(${wood6})` }}>
         <div className="resource-tracker">
           <div className="color-bar red-background">
-            {resourceArray.map((resource, index) => {
+            {redResourceArray.map((resource, index) => {
               return (
                 <div className="resource-parent" key={index}>
                   <div
                     className="circle"
-                    style={{ backgroundImage: `url(${iconArray[index]})` }}
+                    style={{ backgroundImage: `url(${redIconArray[index]})` }}
                   ></div>
                   <div
                     className={`resource ${turn}`}
-                  >{`${blueResources[resource]}`}</div>
+                  >{`${redResources[resource]}`}</div>
                 </div>
               )
             })}
@@ -1162,12 +1166,12 @@ function App() {
               className="circle big"
               style={{ backgroundImage: `url(${blueShieldIcon})` }}
             ></div>
-            {resourceArray.map((resource, index) => {
+            {blueResourceArray.map((resource, index) => {
               return (
                 <div className="resource-parent" key={index}>
                   <div
                     className="circle"
-                    style={{ backgroundImage: `url(${iconArray[index]})` }}
+                    style={{ backgroundImage: `url(${blueIconArray[index]})` }}
                   ></div>
                   <div
                     className={`resource ${turn}`}
@@ -1183,7 +1187,7 @@ function App() {
             {(turn === "blue" ? blueHand : redHand).map((card, index) => {
               return (
                 <div
-                  className={`card`}
+                  className="player-card"
                   key={index}
                   style={{
                     backgroundImage: `url(${card.image})`,
@@ -1332,19 +1336,6 @@ function App() {
           </div>
 
           <div className="statsBar">
-            {/* <button
-            className="end-turn"
-            onClick={() => {
-              if (payState.possibleMoves.length === 0) {
-                startGame()
-              }
-            }}
-          >
-            Start Game
-          </button> */}
-
-            {/* <div className={`resource ${turn}`}>{`Turn: ${turn}`}</div> */}
-
             <div className="dice-div">
               <div
                 className={`dice ${startedTurn === true ? "" : "hide"}`}
@@ -1389,6 +1380,18 @@ function App() {
             >
               End Turn
             </button>
+            {/* <button
+            className="end-turn"
+            onClick={() => {
+              if (payState.possibleMoves.length === 0) {
+                startGame()
+              }
+            }}
+          >
+            Start Game
+          </button> */}
+
+            {/* <div className={`resource ${turn}`}>{`Turn: ${turn}`}</div> */}
           </div>
         </div>
       </div>
