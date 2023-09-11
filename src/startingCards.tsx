@@ -1,37 +1,19 @@
-import blueBrick1 from "./cards-2/blue-player/blue-brick.png"
-import blueGold2 from "./cards-2/blue-player/blue-gold.png"
-import blueGrain2 from "./cards-2/blue-player/blue-grain.png"
-import blueLumber2 from "./cards-2/blue-player/blue-lumber.png"
-import blueOre2 from "./cards-2/blue-player/blue-ore.png"
+import blueBrick from "./cards-2/blue-player/blue-brick.png"
+import blueGold from "./cards-2/blue-player/blue-gold.png"
+import blueGrain from "./cards-2/blue-player/blue-grain.png"
+import blueLumber from "./cards-2/blue-player/blue-lumber.png"
+import blueOre from "./cards-2/blue-player/blue-ore.png"
 import blueWool from "./cards-2/blue-player/blue-wool.png"
 
-import redBrick1 from "./cards-2/red-player/red-brick.png"
-import redGold2 from "./cards-2/red-player/red-gold.png"
-import redGrain2 from "./cards-2/red-player/red-grain.png"
-import redLumber2 from "./cards-2/red-player/red-lumber.png"
-import redOre2 from "./cards-2/red-player/red-ore.png"
+import redBrick from "./cards-2/red-player/red-brick.png"
+import redGold from "./cards-2/red-player/red-gold.png"
+import redGrain from "./cards-2/red-player/red-grain.png"
+import redLumber from "./cards-2/red-player/red-lumber.png"
+import redOre from "./cards-2/red-player/red-ore.png"
 import redWool from "./cards-2/red-player/red-wool.png"
 
 import road from "./cards-2/blue-player/road-back.png"
 import settlement from "./cards-2/blue-player/settlement-back.png"
-
-import blueBrick from "./cards/blue-player/blue-brick.jpg"
-import blueGold from "./cards/blue-player/blue-gold.jpg"
-import blueRoad from "./cards/blue-player/blue-road.jpg"
-import blueRock from "./cards/blue-player/blue-rock.jpg"
-import blueSettlement from "./cards/blue-player/blue-settlement.jpg"
-import blueSheep from "./cards/blue-player/blue-sheep.jpg"
-import blueWheat from "./cards/blue-player/blue-wheat.jpg"
-import blueWood from "./cards/blue-player/blue-wood.jpg"
-
-import redBrick from "./cards/red-player/red-brick.jpg"
-import redGold from "./cards/red-player/red-gold.jpg"
-import redRoad from "./cards/red-player/red-road.jpg"
-import redRock from "./cards/red-player/red-rock.jpg"
-import redSettlement from "./cards/red-player/red-settlement.jpg"
-import redSheep from "./cards/red-player/red-sheep.jpg"
-import redWheat from "./cards/red-player/red-wheat.jpg"
-import redWood from "./cards/red-player/red-wood.jpg"
 
 export interface CardDefinition {
   type: string // might remove, change to card name
@@ -346,7 +328,7 @@ export const blueStartingCards: CardDefinition[] = [
     resourceCount: 1,
     diceNumber: 3,
     index: 15,
-    image: blueWood,
+    image: blueLumber,
     buildingType: "region",
     rotation: 0,
     minRotation: 90,
@@ -422,7 +404,7 @@ export const blueStartingCards: CardDefinition[] = [
     resourceCount: 1,
     diceNumber: 5,
     index: 19,
-    image: blueWheat,
+    image: blueGrain,
     buildingType: "region",
     rotation: 0,
     minRotation: 90,
@@ -574,7 +556,7 @@ export const blueStartingCards: CardDefinition[] = [
     resourceCount: 0,
     diceNumber: 0,
     index: 27,
-    image: blueSettlement,
+    image: settlement,
     buildingType: "settlement",
     rotation: 0,
     minRotation: 0,
@@ -593,7 +575,7 @@ export const blueStartingCards: CardDefinition[] = [
     resourceCount: 0,
     diceNumber: 0,
     index: 28,
-    image: blueRoad,
+    image: road,
     buildingType: "road",
     rotation: 0,
     minRotation: 0,
@@ -612,7 +594,7 @@ export const blueStartingCards: CardDefinition[] = [
     resourceCount: 0,
     diceNumber: 0,
     index: 29,
-    image: blueSettlement,
+    image: settlement,
     buildingType: "settlement",
     rotation: 0,
     minRotation: 0,
@@ -802,7 +784,7 @@ export const blueStartingCards: CardDefinition[] = [
     resourceCount: 1,
     diceNumber: 1,
     index: 39,
-    image: blueSheep,
+    image: blueWool,
     buildingType: "region",
     rotation: 0,
     minRotation: 90,
@@ -840,7 +822,7 @@ export const blueStartingCards: CardDefinition[] = [
     resourceCount: 1,
     diceNumber: 6,
     index: 41,
-    image: blueRock,
+    image: blueOre,
     buildingType: "region",
     rotation: 0,
     minRotation: 90,
@@ -1394,7 +1376,7 @@ export const redStartingCards: CardDefinition[] = [
     resourceCount: 1,
     diceNumber: 2,
     index: 15,
-    image: redWood,
+    image: redLumber,
     buildingType: "region",
     rotation: 0,
     minRotation: 90,
@@ -1470,7 +1452,7 @@ export const redStartingCards: CardDefinition[] = [
     resourceCount: 1,
     diceNumber: 6,
     index: 19,
-    image: redWheat,
+    image: redGrain,
     buildingType: "region",
     rotation: 0,
     minRotation: 90,
@@ -1622,7 +1604,7 @@ export const redStartingCards: CardDefinition[] = [
     resourceCount: 0,
     diceNumber: 0,
     index: 27,
-    image: redSettlement,
+    image: settlement,
     buildingType: "settlement",
     rotation: 0,
     minRotation: 0,
@@ -1641,7 +1623,7 @@ export const redStartingCards: CardDefinition[] = [
     resourceCount: 0,
     diceNumber: 0,
     index: 28,
-    image: redRoad,
+    image: road,
     buildingType: "road",
     rotation: 0,
     minRotation: 0,
@@ -1660,7 +1642,7 @@ export const redStartingCards: CardDefinition[] = [
     resourceCount: 0,
     diceNumber: 0,
     index: 29,
-    image: redSettlement,
+    image: settlement,
     buildingType: "settlement",
     rotation: 0,
     minRotation: 0,
@@ -1850,7 +1832,7 @@ export const redStartingCards: CardDefinition[] = [
     resourceCount: 1,
     diceNumber: 4,
     index: 39,
-    image: redSheep,
+    image: redWool,
     buildingType: "region",
     rotation: 0,
     minRotation: 90,
@@ -1888,7 +1870,7 @@ export const redStartingCards: CardDefinition[] = [
     resourceCount: 1,
     diceNumber: 5,
     index: 41,
-    image: redRock,
+    image: redOre,
     buildingType: "region",
     rotation: 0,
     minRotation: 90,

@@ -1,3 +1,23 @@
+import victoryIcon from "./icons/victory-icon.png"
+import strengthIcon from "./icons/strength-icon.png"
+import commerceIcon from "./icons/commerce-icon.png"
+import skillIcon from "./icons/skill-icon.png"
+import progressIcon from "./icons/progress-icon.png"
+import brickIcon from "./icons/brick-icon.png"
+import goldIcon from "./icons/gold-icon.png"
+import grainIcon from "./icons/grain-icon.png"
+import lumberIcon from "./icons/lumber-icon.png"
+import oreIcon from "./icons/ore-icon.png"
+import woolIcon from "./icons/wool-icon.png"
+
+import woodBackground from "./wood-texture-1.avif"
+import wood2 from "./wood2.jpeg"
+import wood3 from "./wood3.webp"
+import lightWood from "./light-brown-wood.jpeg"
+import darkWood from "./wood-dark-planks.jpeg"
+// import wood6 from "./wood8.jpeg"
+import wood6 from "./wood-background/WOODGRAIN.jpg"
+
 import { useEffect, useState } from "react"
 
 import harp from "./cards/eventHarp.png"
@@ -199,6 +219,8 @@ const StartPayState: PayState = {
 }
 
 function App() {
+  const [startedTurn, setStartedTurn] = useState<boolean>(false)
+
   const [payState, setPayState] = useState<PayState>(StartPayState)
 
   // vitory points
@@ -556,8 +578,6 @@ function App() {
         })
       }
     })
-
-    console.log({ ...payState.cost })
 
     setPayState(payState => {
       return {
@@ -952,6 +972,8 @@ function App() {
     const loops = 3 - playerHand.length
     const setPlayerHand = turn === "blue" ? setBlueHand : setRedHand
 
+    setStartedTurn(false)
+
     // replenish hand if less than 3 cards
     for (let i = 0; i < loops; i++) {
       setCenterCards(centerCards => {
@@ -992,6 +1014,8 @@ function App() {
   }
 
   function rollDice() {
+    setStartedTurn(true)
+
     const productionDie = productionRoll()
     setProductionDie(productionDie)
 
@@ -1089,11 +1113,9 @@ function App() {
     // perform event
   }
 
-  // console.log(payState)
-
   return (
     <>
-      <div className="window">
+      <div className="window wood" style={{ backgroundImage: `url(${wood6})` }}>
         <div className="player-hand">
           {(turn === "blue" ? blueHand : redHand).map((card, index) => {
             return (
@@ -1162,18 +1184,18 @@ function App() {
                     }
                   }}
                 >
-                  {` ${card.index} ${card.type}`}
+                  {/* {` ${card.index} ${card.type}`} */}
                 </div>
               )
             })}
           </div>
 
           {/* center cards */}
-          <div className="centerCards">
+          <div className="center-cards">
             {centerCards.map((stack, index) => {
               return (
                 <div
-                  className="card noBackground"
+                  className="card center-card"
                   key={index}
                   style={{ backgroundImage: `url(${stack.image})` }}
                   onClick={() => {
@@ -1239,7 +1261,7 @@ function App() {
                     }
                   }}
                 >
-                  {` ${card.index} ${card.type}`}
+                  {/* {` ${card.index} ${card.type}`} */}
                 </div>
               )
             })}
@@ -1247,43 +1269,7 @@ function App() {
         </div>
 
         <div className="statsBar">
-          <div className="resourceTracker">
-            <div className={`resource ${turn}`}>{`Turn: ${turn}`}</div>
-            <div className={`resource ${turn}`}>{`Brick: ${
-              (turn === "blue" ? blueResources : redResources).brick
-            }`}</div>
-            <div className={`resource ${turn}`}>{`Gold: ${
-              (turn === "blue" ? blueResources : redResources).gold
-            }`}</div>
-            <div className={`resource ${turn}`}>{`Grain: ${
-              (turn === "blue" ? blueResources : redResources).grain
-            }`}</div>
-            <div className={`resource ${turn}`}>{`Lumber: ${
-              (turn === "blue" ? blueResources : redResources).lumber
-            }`}</div>
-            <div className={`resource ${turn}`}>{`Ore: ${
-              (turn === "blue" ? blueResources : redResources).ore
-            }`}</div>
-            <div className={`resource ${turn}`}>{`Wool: ${
-              (turn === "blue" ? blueResources : redResources).wool
-            }`}</div>
-            <div className={`resource ${turn}`}>{`Victory Points: ${
-              (turn === "blue" ? blueResources : redResources).victoryPoints
-            }`}</div>
-            <div className={`resource ${turn}`}>{`Commerce Points: ${
-              (turn === "blue" ? blueResources : redResources).commercePoints
-            }`}</div>
-            <div className={`resource ${turn}`}>{`Strength Points: ${
-              (turn === "blue" ? blueResources : redResources).strengthPoints
-            }`}</div>
-            <div className={`resource ${turn}`}>{`Progress Points: ${
-              (turn === "blue" ? blueResources : redResources).progressPoints
-            }`}</div>
-            <div className={`resource ${turn}`}>{`Skill Points: ${
-              (turn === "blue" ? blueResources : redResources).skillPoints
-            }`}</div>
-          </div>
-          <button
+          {/* <button
             className="end-turn"
             onClick={() => {
               if (payState.possibleMoves.length === 0) {
@@ -1292,9 +1278,35 @@ function App() {
             }}
           >
             Start Game
+          </button> */}
+
+          {/* <div className={`resource ${turn}`}>{`Turn: ${turn}`}</div> */}
+
+          <div className="dice-div">
+            <div
+              className={`dice ${startedTurn === true ? "" : "hide"}`}
+              style={{ backgroundImage: `url(${eventDie?.image})` }}
+            ></div>
+            <div
+              className={`dice margin-left ${
+                startedTurn === true ? "" : "hide"
+              }`}
+              style={{ backgroundImage: `url(${productionDie?.image})` }}
+            ></div>
+          </div>
+
+          <button
+            className="button"
+            onClick={() => {
+              if (payState.possibleMoves.length === 0) {
+                rollDice()
+              }
+            }}
+          >
+            Roll Dice
           </button>
           <button
-            className="end-turn"
+            className="button"
             onClick={() => {
               if (payState.possibleMoves.length === 0) {
                 // trade
@@ -1305,7 +1317,7 @@ function App() {
           </button>
 
           <button
-            className="end-turn"
+            className="button margin-bottom"
             onClick={() => {
               if (payState.possibleMoves.length === 0) {
                 endTurn()
@@ -1314,24 +1326,118 @@ function App() {
           >
             End Turn
           </button>
-          <button
-            className="end-turn"
-            onClick={() => {
-              if (payState.possibleMoves.length === 0) {
-                rollDice()
-              }
-            }}
-          >
-            Roll Dice
-          </button>
-          <div
-            className="dice"
-            style={{ backgroundImage: `url(${eventDie?.image})` }}
-          ></div>
-          <div
-            className="dice"
-            style={{ backgroundImage: `url(${productionDie?.image})` }}
-          ></div>
+
+          <div className="resource-tracker">
+            <div className="resource-parent">
+              <div
+                className="circle"
+                style={{ backgroundImage: `url(${victoryIcon})` }}
+              ></div>
+              <div className={`resource ${turn}`}>{`${
+                (turn === "blue" ? blueResources : redResources).victoryPoints
+              }`}</div>
+            </div>
+
+            <div className="resource-parent">
+              <div
+                className="circle"
+                style={{ backgroundImage: `url(${strengthIcon})` }}
+              ></div>
+              <div className={`resource ${turn}`}>{`${
+                (turn === "blue" ? blueResources : redResources).strengthPoints
+              }`}</div>
+            </div>
+
+            <div className="resource-parent">
+              <div
+                className="circle"
+                style={{ backgroundImage: `url(${commerceIcon})` }}
+              ></div>
+              <div className={`resource ${turn}`}>{`${
+                (turn === "blue" ? blueResources : redResources).commercePoints
+              }`}</div>
+            </div>
+
+            <div className="resource-parent">
+              <div
+                className="circle"
+                style={{ backgroundImage: `url(${skillIcon})` }}
+              ></div>
+              <div className={`resource ${turn}`}>{`${
+                (turn === "blue" ? blueResources : redResources).skillPoints
+              }`}</div>
+            </div>
+
+            <div className="resource-parent">
+              <div
+                className="circle"
+                style={{ backgroundImage: `url(${progressIcon})` }}
+              ></div>
+              <div className={`resource ${turn}`}>{`${
+                (turn === "blue" ? blueResources : redResources).progressPoints
+              }`}</div>
+            </div>
+
+            <div className="resource-parent">
+              <div
+                className="circle"
+                style={{ backgroundImage: `url(${brickIcon})` }}
+              ></div>
+              <div className={`resource ${turn}`}>{`${
+                (turn === "blue" ? blueResources : redResources).brick
+              }`}</div>
+            </div>
+
+            <div className="resource-parent">
+              <div
+                className="circle"
+                style={{ backgroundImage: `url(${goldIcon})` }}
+              ></div>
+              <div className={`resource ${turn}`}>{`${
+                (turn === "blue" ? blueResources : redResources).gold
+              }`}</div>
+            </div>
+
+            <div className="resource-parent">
+              <div
+                className="circle"
+                style={{ backgroundImage: `url(${grainIcon})` }}
+              ></div>
+              <div className={`resource ${turn}`}>{`${
+                (turn === "blue" ? blueResources : redResources).grain
+              }`}</div>
+            </div>
+
+            <div className="resource-parent">
+              <div
+                className="circle"
+                style={{ backgroundImage: `url(${lumberIcon})` }}
+              ></div>
+              <div className={`resource ${turn}`}>{`${
+                (turn === "blue" ? blueResources : redResources).lumber
+              }`}</div>
+            </div>
+
+            <div className="resource-parent">
+              <div
+                className="circle"
+                style={{ backgroundImage: `url(${oreIcon})` }}
+              ></div>
+              <div className={`resource ${turn}`}>{`${
+                (turn === "blue" ? blueResources : redResources).ore
+              }`}</div>
+            </div>
+
+            <div className="resource-parent">
+              <div
+                className="circle"
+                style={{ backgroundImage: `url(${woolIcon})` }}
+              ></div>
+              <div className={`resource ${turn}`}>{`${
+                (turn === "blue" ? blueResources : redResources).wool
+              }`}</div>
+            </div>
+          </div>
         </div>
       </div>
     </>

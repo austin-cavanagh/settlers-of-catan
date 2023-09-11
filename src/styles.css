@@ -11,14 +11,12 @@ body {
 
 /* window */
 .window {
-  --window-height: 100vh;
-  --window-width: 100vw;
-
   display: flex;
   justify-content: center;
   align-items: center;
-  height: var(--window-height);
-  width: var(--window-width);
+  height: 100vh;
+  width: 100vw;
+  background-color: #a17a58;
 }
 
 /* overall board for both players and center cards */
@@ -40,39 +38,40 @@ body {
   grid-template-rows: repeat(5, 1fr);
   justify-content: center;
   justify-items: center;
+  align-content: center;
   align-items: center;
-  gap: 0.6%;
+  gap: 0.4vh;
 }
 
 /* center cards */
-.centerCards {
+.center-cards {
   height: 10vh;
-  width: 58vh;
+  width: 60vh;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(1, 1fr);
   justify-content: center;
   justify-items: center;
   align-items: center;
-  gap: 0.6%;
+  gap: 0.4vh;
   cursor: grab;
   margin-top: 1vh;
-  margin-bottom: 1vh;
+  margin-bottom: 2vh;
 }
 
-.centerCards:active {
+.center-cards:active {
   cursor: grabbing;
 }
 
 /* player hand */
 .player-hand {
-  height: 600px;
-  width: 192px;
+  height: 66vh;
+  width: 22vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1%;
+  gap: 1vh;
   cursor: grab;
   margin-right: 50px;
 }
@@ -84,15 +83,15 @@ body {
 /* card */
 .card {
   height: 100%;
-  width: 100%;
+  width: 98%;
   background-position: center;
-  background-size: 99%;
+  background-size: 100%;
   background-repeat: no-repeat;
-  border-radius: 8%;
+  border-radius: 0.6vh;
   overflow: hidden;
-  color: blue;
+  /* color: blue; */
   display: flex;
-  font-size: 15px;
+  /* font-size: 15px; */
   justify-content: center;
   align-items: center;
   transition: transform 1s ease;
@@ -123,17 +122,6 @@ body {
   flex-direction: column;
 }
 
-.resourceTracker {
-  height: 400px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  gap: 1px;
-}
-
 .resource {
   height: 100%;
   width: auto;
@@ -148,15 +136,37 @@ body {
   color: white;
 }
 
-.end-turn {
-  height: 30px;
-  width: 80px;
-  margin-top: 10px;
+.blue {
+  background-color: blue;
+}
+
+.red {
+  background-color: red;
+}
+
+.center-card {
+  height: 11vh;
+  width: 11vh;
+}
+
+.wood {
+  margin: 0; /* Ensuring there's no default margin */
+  padding: 0; /* Ensuring there's no default padding */
+  background-image: url("path-to-your-image.jpg"); /* Replace with your image path */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  background-position: center top; /* Aligns the image to the center top of the screen */
+  background-size: 100% auto; /* Makes the image's width equal to the screen's width, height is adjusted automatically */
+}
+
+.dice-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dice {
-  height: 100px;
-  width: 100px;
+  height: 11vh;
+  width: 11vh;
   background-position: center;
   background-size: 100%;
   background-repeat: no-repeat;
@@ -165,16 +175,60 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 1s ease;
   background-color: transparent;
-  border: 5px solid black;
-  margin-top: 20px;
+  border: 0.6vh solid black;
+  margin-bottom: 1.5vh;
 }
 
-.blue {
-  background-color: blue;
+.hide {
+  border: none;
+  background-size: 0%;
 }
 
-.red {
+.margin-left {
+  margin-left: 2vh;
+}
+
+.margin-bottom {
+  margin-bottom: 2vh;
+}
+
+.resource-tracker {
+  height: 400px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1px;
   background-color: red;
+}
+
+.button {
+  height: 5vh;
+  width: 12vh;
+  margin-bottom: 1.5vh;
+  border-radius: 3vh;
+  font-size: 2.2vh;
+  border: 0.4vh solid black;
+  background-color: white;
+}
+
+.button:hover {
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
+
+.circle {
+  height: 50px;
+  width: 50px;
+  background-color: blue;
+  border-radius: 50%;
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.resource-parent {
+  display: flex;
 }
