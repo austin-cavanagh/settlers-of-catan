@@ -1,3 +1,5 @@
+import blueShieldIcon from "./icons/blue-shield-icon.png"
+import redShieldIcon from "./icons/red-shield-icon.png"
 import victoryIcon from "./icons/victory-icon.png"
 import strengthIcon from "./icons/strength-icon.png"
 import commerceIcon from "./icons/commerce-icon.png"
@@ -9,6 +11,34 @@ import grainIcon from "./icons/grain-icon.png"
 import lumberIcon from "./icons/lumber-icon.png"
 import oreIcon from "./icons/ore-icon.png"
 import woolIcon from "./icons/wool-icon.png"
+
+const iconArray: string[] = [
+  victoryIcon,
+  strengthIcon,
+  commerceIcon,
+  skillIcon,
+  progressIcon,
+  lumberIcon,
+  brickIcon,
+  grainIcon,
+  woolIcon,
+  oreIcon,
+  goldIcon,
+]
+
+const resourceArray: string[] = [
+  "victoryPoints",
+  "strengthPoints",
+  "commercePoints",
+  "skillPoints",
+  "progressPoints",
+  "lumber",
+  "brick",
+  "grain",
+  "wool",
+  "ore",
+  "gold",
+]
 
 import woodBackground from "./wood-texture-1.avif"
 import wood2 from "./wood2.jpeg"
@@ -52,17 +82,7 @@ import {
 import { boostedRegion } from "./boostedRegion.ts"
 
 interface ResourceTracker {
-  lumber: number
-  gold: number
-  grain: number
-  brick: number
-  wool: number
-  ore: number
-  skillPoints: number
-  progressPoints: number
-  commercePoints: number
-  strengthPoints: number
-  victoryPoints: number
+  [key: string]: number
 }
 
 const startingResources: ResourceTracker = {
@@ -1115,98 +1135,62 @@ function App() {
 
   return (
     <>
-      <div className="window wood" style={{ backgroundImage: `url(${wood6})` }}>
-        <div className="player-hand">
-          {(turn === "blue" ? blueHand : redHand).map((card, index) => {
-            return (
-              <div
-                className={`card`}
-                key={index}
-                style={{
-                  backgroundImage: `url(${card.image})`,
-                }}
-                onClick={() => {
-                  if (payState.possibleMoves.length === 0) {
-                    selectCardFromHand(card)
-                  }
-                }}
-              ></div>
-            )
-          })}
-        </div>
-
-        <div className="board">
-          {/* red board */}
-          <div className="player-board rotate">
-            {redCards.map((card: CardDefinition, index: number) => {
-              if (card.type === "region") {
-                return (
-                  <div
-                    className="card"
-                    key={index}
-                    style={{
-                      backgroundImage: `url(${card.image})`,
-                      transform: `rotate(${card.rotation}deg)`,
-                      outline: `5px solid ${redRegionColors[index]}`,
-                      cursor: `${
-                        redRegionColors[index] === "green"
-                          ? "pointer"
-                          : "default"
-                      }`,
-                    }}
-                    onClick={() => {
-                      if (
-                        payState.possibleMoves.includes(index) &&
-                        turn === "red"
-                      ) {
-                        selectPayResource(card)
-                      }
-                    }}
-                  ></div>
-                )
-              }
-
+      <div className="window" style={{ backgroundImage: `url(${wood6})` }}>
+        <div className="resource-tracker">
+          <div className="color-bar red-background">
+            {resourceArray.map((resource, index) => {
               return (
-                <div
-                  className="card red-letters"
-                  key={index}
-                  style={{
-                    backgroundImage: `url(${card.image})`,
-                    outline: `5px solid ${redColors[index]}`,
-                    cursor: `${
-                      redColors[index] === "green" ? "pointer" : "default"
-                    }`,
-                  }}
-                  onClick={() => {
-                    if (payState.possibleMoves.length === 0) {
-                      if (buildMode.active === "red") buildCard(index)
-                      if (buildBasic.active === "red") buildCard(index)
-                    }
-                  }}
-                >
-                  {/* {` ${card.index} ${card.type}`} */}
+                <div className="resource-parent" key={index}>
+                  <div
+                    className="circle"
+                    style={{ backgroundImage: `url(${iconArray[index]})` }}
+                  ></div>
+                  <div
+                    className={`resource ${turn}`}
+                  >{`${blueResources[resource]}`}</div>
+                </div>
+              )
+            })}
+            <div
+              className="circle big"
+              style={{ backgroundImage: `url(${redShieldIcon})` }}
+            ></div>
+          </div>
+
+          <div className="color-bar blue-background">
+            <div
+              className="circle big"
+              style={{ backgroundImage: `url(${blueShieldIcon})` }}
+            ></div>
+            {resourceArray.map((resource, index) => {
+              return (
+                <div className="resource-parent" key={index}>
+                  <div
+                    className="circle"
+                    style={{ backgroundImage: `url(${iconArray[index]})` }}
+                  ></div>
+                  <div
+                    className={`resource ${turn}`}
+                  >{`${blueResources[resource]}`}</div>
                 </div>
               )
             })}
           </div>
+        </div>
 
-          {/* center cards */}
-          <div className="center-cards">
-            {centerCards.map((stack, index) => {
+        <div className="bottom-section">
+          <div className="player-hand">
+            {(turn === "blue" ? blueHand : redHand).map((card, index) => {
               return (
                 <div
-                  className="card center-card"
+                  className={`card`}
                   key={index}
-                  style={{ backgroundImage: `url(${stack.image})` }}
+                  style={{
+                    backgroundImage: `url(${card.image})`,
+                  }}
                   onClick={() => {
                     if (payState.possibleMoves.length === 0) {
-                      if (
-                        stack.cardStack === "road" ||
-                        stack.cardStack === "settlement" ||
-                        stack.cardStack === "city"
-                      ) {
-                        selectedCenterCard(stack)
-                      }
+                      selectCardFromHand(card)
                     }
                   }}
                 ></div>
@@ -1214,62 +1198,141 @@ function App() {
             })}
           </div>
 
-          {/* blue board */}
-          <div className="player-board rotate">
-            {blueCards.map((card: CardDefinition, index: number) => {
-              if (card.type === "region") {
+          <div className="board">
+            {/* red board */}
+            <div className="player-board rotate">
+              {redCards.map((card: CardDefinition, index: number) => {
+                if (card.type === "region") {
+                  return (
+                    <div
+                      className="card"
+                      key={index}
+                      style={{
+                        backgroundImage: `url(${card.image})`,
+                        transform: `rotate(${card.rotation}deg)`,
+                        outline: `5px solid ${redRegionColors[index]}`,
+                        cursor: `${
+                          redRegionColors[index] === "green"
+                            ? "pointer"
+                            : "default"
+                        }`,
+                      }}
+                      onClick={() => {
+                        if (
+                          payState.possibleMoves.includes(index) &&
+                          turn === "red"
+                        ) {
+                          selectPayResource(card)
+                        }
+                      }}
+                    ></div>
+                  )
+                }
+
+                return (
+                  <div
+                    className="card red-letters"
+                    key={index}
+                    style={{
+                      backgroundImage: `url(${card.image})`,
+                      outline: `5px solid ${redColors[index]}`,
+                      cursor: `${
+                        redColors[index] === "green" ? "pointer" : "default"
+                      }`,
+                    }}
+                    onClick={() => {
+                      if (payState.possibleMoves.length === 0) {
+                        if (buildMode.active === "red") buildCard(index)
+                        if (buildBasic.active === "red") buildCard(index)
+                      }
+                    }}
+                  >
+                    {/* {` ${card.index} ${card.type}`} */}
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* center cards */}
+            <div className="center-cards">
+              {centerCards.map((stack, index) => {
+                return (
+                  <div
+                    className="card center-card"
+                    key={index}
+                    style={{ backgroundImage: `url(${stack.image})` }}
+                    onClick={() => {
+                      if (payState.possibleMoves.length === 0) {
+                        if (
+                          stack.cardStack === "road" ||
+                          stack.cardStack === "settlement" ||
+                          stack.cardStack === "city"
+                        ) {
+                          selectedCenterCard(stack)
+                        }
+                      }
+                    }}
+                  ></div>
+                )
+              })}
+            </div>
+
+            {/* blue board */}
+            <div className="player-board rotate">
+              {blueCards.map((card: CardDefinition, index: number) => {
+                if (card.type === "region") {
+                  return (
+                    <div
+                      className="card"
+                      key={index}
+                      style={{
+                        backgroundImage: `url(${card.image})`,
+                        transform: `rotate(${card.rotation}deg)`,
+                        outline: `5px solid ${blueRegionColors[index]}`,
+                        cursor: `${
+                          blueRegionColors[index] === "green"
+                            ? "pointer"
+                            : "default"
+                        }`,
+                      }}
+                      onClick={() => {
+                        if (
+                          payState.possibleMoves.includes(index) &&
+                          turn === "blue"
+                        )
+                          selectPayResource(card)
+                      }}
+                    ></div>
+                  )
+                }
+
                 return (
                   <div
                     className="card"
                     key={index}
                     style={{
                       backgroundImage: `url(${card.image})`,
-                      transform: `rotate(${card.rotation}deg)`,
-                      outline: `5px solid ${blueRegionColors[index]}`,
+                      outline: `5px solid ${blueColors[index]}`,
                       cursor: `${
-                        blueRegionColors[index] === "green"
-                          ? "pointer"
-                          : "default"
+                        blueColors[index] === "green" ? "pointer" : "default"
                       }`,
                     }}
                     onClick={() => {
-                      if (
-                        payState.possibleMoves.includes(index) &&
-                        turn === "blue"
-                      )
-                        selectPayResource(card)
+                      if (payState.possibleMoves.length === 0) {
+                        if (buildMode.active === "blue") buildCard(index)
+                        if (buildBasic.active === "blue") buildCard(index)
+                      }
                     }}
-                  ></div>
+                  >
+                    {/* {` ${card.index} ${card.type}`} */}
+                  </div>
                 )
-              }
-
-              return (
-                <div
-                  className="card"
-                  key={index}
-                  style={{
-                    backgroundImage: `url(${card.image})`,
-                    outline: `5px solid ${blueColors[index]}`,
-                    cursor: `${
-                      blueColors[index] === "green" ? "pointer" : "default"
-                    }`,
-                  }}
-                  onClick={() => {
-                    if (payState.possibleMoves.length === 0) {
-                      if (buildMode.active === "blue") buildCard(index)
-                      if (buildBasic.active === "blue") buildCard(index)
-                    }
-                  }}
-                >
-                  {/* {` ${card.index} ${card.type}`} */}
-                </div>
-              )
-            })}
+              })}
+            </div>
           </div>
-        </div>
 
-        <div className="statsBar">
-          {/* <button
+          <div className="statsBar">
+            {/* <button
             className="end-turn"
             onClick={() => {
               if (payState.possibleMoves.length === 0) {
@@ -1280,163 +1343,52 @@ function App() {
             Start Game
           </button> */}
 
-          {/* <div className={`resource ${turn}`}>{`Turn: ${turn}`}</div> */}
+            {/* <div className={`resource ${turn}`}>{`Turn: ${turn}`}</div> */}
 
-          <div className="dice-div">
-            <div
-              className={`dice ${startedTurn === true ? "" : "hide"}`}
-              style={{ backgroundImage: `url(${eventDie?.image})` }}
-            ></div>
-            <div
-              className={`dice margin-left ${
-                startedTurn === true ? "" : "hide"
-              }`}
-              style={{ backgroundImage: `url(${productionDie?.image})` }}
-            ></div>
-          </div>
-
-          <button
-            className="button"
-            onClick={() => {
-              if (payState.possibleMoves.length === 0) {
-                rollDice()
-              }
-            }}
-          >
-            Roll Dice
-          </button>
-          <button
-            className="button"
-            onClick={() => {
-              if (payState.possibleMoves.length === 0) {
-                // trade
-              }
-            }}
-          >
-            Trade
-          </button>
-
-          <button
-            className="button margin-bottom"
-            onClick={() => {
-              if (payState.possibleMoves.length === 0) {
-                endTurn()
-              }
-            }}
-          >
-            End Turn
-          </button>
-
-          <div className="resource-tracker">
-            <div className="resource-parent">
+            <div className="dice-div">
               <div
-                className="circle"
-                style={{ backgroundImage: `url(${victoryIcon})` }}
+                className={`dice ${startedTurn === true ? "" : "hide"}`}
+                style={{ backgroundImage: `url(${eventDie?.image})` }}
               ></div>
-              <div className={`resource ${turn}`}>{`${
-                (turn === "blue" ? blueResources : redResources).victoryPoints
-              }`}</div>
+              <div
+                className={`dice margin-left ${
+                  startedTurn === true ? "" : "hide"
+                }`}
+                style={{ backgroundImage: `url(${productionDie?.image})` }}
+              ></div>
             </div>
 
-            <div className="resource-parent">
-              <div
-                className="circle"
-                style={{ backgroundImage: `url(${strengthIcon})` }}
-              ></div>
-              <div className={`resource ${turn}`}>{`${
-                (turn === "blue" ? blueResources : redResources).strengthPoints
-              }`}</div>
-            </div>
+            <button
+              className="button"
+              onClick={() => {
+                if (payState.possibleMoves.length === 0) {
+                  rollDice()
+                }
+              }}
+            >
+              Roll Dice
+            </button>
+            <button
+              className="button"
+              onClick={() => {
+                if (payState.possibleMoves.length === 0) {
+                  // trade
+                }
+              }}
+            >
+              Trade
+            </button>
 
-            <div className="resource-parent">
-              <div
-                className="circle"
-                style={{ backgroundImage: `url(${commerceIcon})` }}
-              ></div>
-              <div className={`resource ${turn}`}>{`${
-                (turn === "blue" ? blueResources : redResources).commercePoints
-              }`}</div>
-            </div>
-
-            <div className="resource-parent">
-              <div
-                className="circle"
-                style={{ backgroundImage: `url(${skillIcon})` }}
-              ></div>
-              <div className={`resource ${turn}`}>{`${
-                (turn === "blue" ? blueResources : redResources).skillPoints
-              }`}</div>
-            </div>
-
-            <div className="resource-parent">
-              <div
-                className="circle"
-                style={{ backgroundImage: `url(${progressIcon})` }}
-              ></div>
-              <div className={`resource ${turn}`}>{`${
-                (turn === "blue" ? blueResources : redResources).progressPoints
-              }`}</div>
-            </div>
-
-            <div className="resource-parent">
-              <div
-                className="circle"
-                style={{ backgroundImage: `url(${brickIcon})` }}
-              ></div>
-              <div className={`resource ${turn}`}>{`${
-                (turn === "blue" ? blueResources : redResources).brick
-              }`}</div>
-            </div>
-
-            <div className="resource-parent">
-              <div
-                className="circle"
-                style={{ backgroundImage: `url(${goldIcon})` }}
-              ></div>
-              <div className={`resource ${turn}`}>{`${
-                (turn === "blue" ? blueResources : redResources).gold
-              }`}</div>
-            </div>
-
-            <div className="resource-parent">
-              <div
-                className="circle"
-                style={{ backgroundImage: `url(${grainIcon})` }}
-              ></div>
-              <div className={`resource ${turn}`}>{`${
-                (turn === "blue" ? blueResources : redResources).grain
-              }`}</div>
-            </div>
-
-            <div className="resource-parent">
-              <div
-                className="circle"
-                style={{ backgroundImage: `url(${lumberIcon})` }}
-              ></div>
-              <div className={`resource ${turn}`}>{`${
-                (turn === "blue" ? blueResources : redResources).lumber
-              }`}</div>
-            </div>
-
-            <div className="resource-parent">
-              <div
-                className="circle"
-                style={{ backgroundImage: `url(${oreIcon})` }}
-              ></div>
-              <div className={`resource ${turn}`}>{`${
-                (turn === "blue" ? blueResources : redResources).ore
-              }`}</div>
-            </div>
-
-            <div className="resource-parent">
-              <div
-                className="circle"
-                style={{ backgroundImage: `url(${woolIcon})` }}
-              ></div>
-              <div className={`resource ${turn}`}>{`${
-                (turn === "blue" ? blueResources : redResources).wool
-              }`}</div>
-            </div>
+            <button
+              className="button margin-bottom"
+              onClick={() => {
+                if (payState.possibleMoves.length === 0) {
+                  endTurn()
+                }
+              }}
+            >
+              End Turn
+            </button>
           </div>
         </div>
       </div>

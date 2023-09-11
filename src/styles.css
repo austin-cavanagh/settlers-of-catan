@@ -2,6 +2,8 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 600;
 }
 
 body {
@@ -9,14 +11,26 @@ body {
   background-color: lightgrey;
 }
 
-/* window */
 .window {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  background-image: url("path-to-your-image.jpg");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 100% auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* window */
+.bottom-section {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: #a17a58;
 }
 
 /* overall board for both players and center cards */
@@ -122,40 +136,9 @@ body {
   flex-direction: column;
 }
 
-.resource {
-  height: 100%;
-  width: auto;
-  background-color: gray;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  padding: 5px;
-  font-size: 20px;
-  background-color: blue;
-  color: white;
-}
-
-.blue {
-  background-color: blue;
-}
-
-.red {
-  background-color: red;
-}
-
 .center-card {
   height: 11vh;
   width: 11vh;
-}
-
-.wood {
-  margin: 0; /* Ensuring there's no default margin */
-  padding: 0; /* Ensuring there's no default padding */
-  background-image: url("path-to-your-image.jpg"); /* Replace with your image path */
-  background-repeat: no-repeat; /* Prevents the image from repeating */
-  background-position: center top; /* Aligns the image to the center top of the screen */
-  background-size: 100% auto; /* Makes the image's width equal to the screen's width, height is adjusted automatically */
 }
 
 .dice-div {
@@ -193,15 +176,6 @@ body {
   margin-bottom: 2vh;
 }
 
-.resource-tracker {
-  height: 400px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 1px;
-  background-color: red;
-}
-
 .button {
   height: 5vh;
   width: 12vh;
@@ -218,10 +192,42 @@ body {
   cursor: pointer;
 }
 
-.circle {
-  height: 50px;
-  width: 50px;
+.resource-tracker {
+  height: 10vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: red;
+}
+
+.color-bar {
+  height: 100%;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8vh;
+}
+
+.blue-background {
   background-color: blue;
+}
+
+.red-background {
+  background-color: red;
+}
+
+.resource-parent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle {
+  height: 4.5vh;
+  width: 4.5vh;
   border-radius: 50%;
   background-position: center;
   background-size: 100%;
@@ -229,6 +235,20 @@ body {
   overflow: hidden;
 }
 
-.resource-parent {
+.big {
+  height: 8vh;
+  width: 8vh;
+}
+
+.resource {
+  height: 3.5vh;
+  width: auto;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  padding: 5px;
+  font-size: 3.5vh;
+  color: white;
+  margin-top: 0.2vh;
 }
