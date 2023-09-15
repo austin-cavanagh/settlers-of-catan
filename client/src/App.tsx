@@ -253,6 +253,9 @@ const StartPayState: PayState = {
 }
 
 function App() {
+  const [inputValue, setInputValue] = useState<string>("")
+  const [messages, setMessages] = useState<string[]>([])
+
   const [startedTurn, setStartedTurn] = useState<boolean>(false)
 
   const [payState, setPayState] = useState<PayState>(StartPayState)
@@ -1147,6 +1150,22 @@ function App() {
     // perform event
   }
 
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setInputValue(event.target.value)
+  }
+
+  function displayMessage(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    setMessages(messages => {
+      const newMessages = [...messages]
+      newMessages.push(inputValue)
+      return newMessages
+    })
+
+    setInputValue("")
+  }
+
   return (
     <>
       <div className="window" style={{ backgroundImage: `url(${wood6})` }}>
@@ -1345,7 +1364,7 @@ function App() {
             </div>
           </div>
 
-          <div className="statsBar">
+          <div className="right-bar">
             <div className="dice-div">
               <div
                 className={`dice ${startedTurn === true ? "" : "hide"}`}
@@ -1401,7 +1420,22 @@ function App() {
             Start Game
           </button> */}
 
-            <div className="message-box"></div>
+            <div className="message-box">
+              <div className="messages">
+                {messages.map((message, index) => {
+                  return <div key={index}>{message}</div>
+                })}
+              </div>
+              <form className="text-box" onSubmit={displayMessage}>
+                <input
+                  type="text"
+                  className="text"
+                  value={inputValue}
+                  onChange={handleChange}
+                />
+                <button className="send-button">Send</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>

@@ -106,7 +106,7 @@ body {
   align-items: center;
   gap: 1vh;
   cursor: grab;
-  margin-right: 5vh;
+  margin-right: 2vh;
 }
 
 .player-card {
@@ -141,9 +141,9 @@ body {
   width: 0;
 }
 
-.statsBar {
-  height: 50vh;
-  width: 30vh;
+.right-bar {
+  height: 80vh;
+  width: 35vh;
   margin-bottom: 40px;
   display: flex;
   flex-direction: column;
@@ -265,4 +265,41 @@ body {
   font-size: 3.5vh;
   color: white;
   margin-top: 0.2vh;
+}
+
+/* message box */
+.message-box {
+  height: 40vh;
+  width: 40vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.messages {
+  height: 91%;
+  width: 100%;
+  background-color: white;
+}
+
+.text-box {
+  height: 9%;
+  width: 100%;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text {
+  height: 100%;
+  width: 85%;
+  font-size: 15pt;
+}
+
+.send-button {
+  height: 100%;
+  width: 15%;
+  font-size: 14pt;
 }
