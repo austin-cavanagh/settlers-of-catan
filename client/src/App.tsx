@@ -1,3 +1,13 @@
+// import { io } from "socket.io-client"
+
+// const socket = io("http://localhost:3000")
+
+// socket.on("connect", () => {
+//   console.log(`You connected with id; ${socket.id}`)
+// })
+
+// socket.emit("custom-event")
+
 import blueShieldIcon from "./icons/blue-shield-icon.png"
 import redShieldIcon from "./icons/red-shield-icon.png"
 import victoryIcon from "./icons/victory-icon.png"
@@ -1391,7 +1401,7 @@ function App() {
             Start Game
           </button> */}
 
-            {/* <div className={`resource ${turn}`}>{`Turn: ${turn}`}</div> */}
+            <div className="message-box"></div>
           </div>
         </div>
       </div>
