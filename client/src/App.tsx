@@ -610,6 +610,8 @@ function App() {
     }
   }, [socket])
 
+  // need to add react router to allow for more routes than just localhost:3000
+
   function selectPayResource(card: CardDefinition) {
     const playerCards = turn === "blue" ? blueCards : redCards
     const setPlayerCards = turn === "blue" ? setBlueCards : setRedCards
