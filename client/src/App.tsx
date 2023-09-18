@@ -1,12 +1,5 @@
-// import { io } from "socket.io-client"
-
-// const socket = io("http://localhost:3000")
-
-// socket.on("connect", () => {
-//   console.log(`You connected with id; ${socket.id}`)
-// })
-
-// socket.emit("custom-event")
+import { io } from "socket.io-client"
+import { Socket } from "socket.io-client"
 
 import blueShieldIcon from "./icons/blue-shield-icon.png"
 import redShieldIcon from "./icons/red-shield-icon.png"
@@ -578,7 +571,45 @@ function App() {
     })
   }, [strengthAdvantage, tradeAdvantage])
 
-  // function that loops over when paying for a building
+  // socket io
+  const [socket, setSocket] = useState<Socket>()
+  const [isLocalChange, setIsLocalChange] = useState<boolean>(false)
+
+  // creating new socket and disconnecting it
+  useEffect(() => {
+    const newSocket: Socket = io("http://localhost:3000")
+
+    setSocket(newSocket)
+
+    return () => {
+      newSocket.disconnect()
+    }
+  }, [])
+
+  // sending client changes to server
+  useEffect(() => {
+    if (socket == null || isLocalChange === false) return
+
+    socket.emit("send-changes", messages)
+
+    setIsLocalChange(false)
+  }, [messages])
+
+  // updating client messages from server
+  useEffect(() => {
+    if (socket == null) return
+
+    const recieveMessages = (messages: string[]) => {
+      setMessages(messages)
+    }
+
+    socket.on("recieve-changes", recieveMessages)
+
+    return () => {
+      socket.off("recieve-changes", recieveMessages)
+    }
+  }, [socket])
+
   function selectPayResource(card: CardDefinition) {
     const playerCards = turn === "blue" ? blueCards : redCards
     const setPlayerCards = turn === "blue" ? setBlueCards : setRedCards
@@ -1154,14 +1185,17 @@ function App() {
     setInputValue(event.target.value)
   }
 
-  function displayMessage(event: React.FormEvent<HTMLFormElement>) {
+  function submitMessage(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (inputValue === "") return
 
     setMessages(messages => {
       const newMessages = [...messages]
       newMessages.push(inputValue)
       return newMessages
     })
+
+    setIsLocalChange(true)
 
     setInputValue("")
   }
@@ -1423,10 +1457,14 @@ function App() {
             <div className="message-box">
               <div className="messages">
                 {messages.map((message, index) => {
-                  return <div key={index}>{message}</div>
+                  return (
+                    <div key={index} className="player-message">
+                      {message}
+                    </div>
+                  )
                 })}
               </div>
-              <form className="text-box" onSubmit={displayMessage}>
+              <form className="text-box" onSubmit={submitMessage}>
                 <input
                   type="text"
                   className="text"

@@ -295,11 +295,20 @@ body {
 .text {
   height: 100%;
   width: 85%;
-  font-size: 15pt;
+  font-size: 14pt;
 }
 
 .send-button {
   height: 100%;
   width: 15%;
+  font-size: 14pt;
+}
+
+.player-message {
+  height: 10%;
+  width: 100%;
+  background-color: white;
+  display: flex;
+  align-items: center;
   font-size: 14pt;
 }
