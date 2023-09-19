@@ -1,5 +1,6 @@
 import { io } from "socket.io-client"
 import { Socket } from "socket.io-client"
+import { useParams } from "react-router-dom"
 
 import blueShieldIcon from "./icons/blue-shield-icon.png"
 import redShieldIcon from "./icons/red-shield-icon.png"
@@ -245,7 +246,7 @@ const StartPayState: PayState = {
   possibleMoves: [],
 }
 
-export function RivalsForCatan() {
+function RivalsForCatan() {
   const [inputValue, setInputValue] = useState<string>("")
   const [messages, setMessages] = useState<string[]>([])
 
@@ -574,8 +575,9 @@ export function RivalsForCatan() {
   // socket io
   const [socket, setSocket] = useState<Socket>()
   const [isLocalChange, setIsLocalChange] = useState<boolean>(false)
+  const { id: documentId } = useParams<string>()
 
-  // creating new socket and disconnecting it
+  // creating new socket
   useEffect(() => {
     const newSocket: Socket = io("http://localhost:3000")
 
@@ -590,7 +592,7 @@ export function RivalsForCatan() {
   useEffect(() => {
     if (socket == null || isLocalChange === false) return
 
-    socket.emit("send-changes", messages)
+    socket.emit("client-changes", messages)
 
     setIsLocalChange(false)
   }, [messages])
@@ -611,6 +613,28 @@ export function RivalsForCatan() {
   }, [socket])
 
   // need to add react router to allow for more routes than just localhost:3000
+  useEffect(() => {
+    if (socket == null) return
+
+    socket.once("load-document", data => {
+      setMessages(data)
+    })
+
+    socket.emit("get-document", documentId)
+  }, [socket, documentId])
+
+  // updating database
+  useEffect(() => {
+    if (socket == null) return
+
+    const interval = setInterval(() => {
+      socket.emit("save-document", messages)
+    }, 1000)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [socket, messages])
 
   function selectPayResource(card: CardDefinition) {
     const playerCards = turn === "blue" ? blueCards : redCards
@@ -1482,3 +1506,5 @@ export function RivalsForCatan() {
     </>
   )
 }
+
+export default RivalsForCatan
