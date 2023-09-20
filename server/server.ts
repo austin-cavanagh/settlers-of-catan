@@ -14,7 +14,7 @@ const io = require("socket.io")(3000, {
 })
 
 interface RoomTracker {
-  [room: string]: string[]
+  [room: string]: { [blue: string]: string }
 }
 
 let oldPlayerId: string = ""
@@ -24,48 +24,62 @@ const roomLimit: number = 2
 // every time we connect it will run the function
 io.on("connection", (socket: Socket) => {
   socket.on("get-document", async data => {
-    const room = data.documentId
-    const user = data.socketId
+    const room: string = data.documentId
+    const user: string = data.socketId
 
     // finding or creating document
     const document = await findOrCreateDocument(room)
 
     // placing client in room and checking if room has more than 2 people
     socket.on("disconnect", () => {
-      oldPlayerId = user
-      roomTracker[room] = roomTracker[room].filter(user => user !== socket.id)
+      for (const [color, id] of Object.entries(roomTracker[room])) {
+        if (socket.id === id) {
+          roomTracker[room][color] = ""
+        }
+      }
     })
 
-    if (roomTracker[room] && roomTracker[room].length >= 2) {
+    if (
+      roomTracker[room] &&
+      roomTracker[room].blue !== "" &&
+      roomTracker[room].red !== ""
+    ) {
       socket.emit("room-full", { user: user, roomTracker: roomTracker })
     }
 
-    if (roomTracker[room] && roomTracker[room].length < 2) {
-      roomTracker[room].push(user)
+    if (
+      roomTracker[room] &&
+      roomTracker[room].blue !== "" &&
+      roomTracker[room].red === ""
+    ) {
+      roomTracker[room].red = user
+      socket.join(room)
+    }
+
+    if (
+      roomTracker[room] &&
+      roomTracker[room].blue === "" &&
+      roomTracker[room].red !== ""
+    ) {
+      roomTracker[room].blue = user
+      socket.join(room)
+    }
+
+    if (
+      roomTracker[room] &&
+      roomTracker[room].blue === "" &&
+      roomTracker[room].red === ""
+    ) {
+      roomTracker[room].blue = user
       socket.join(room)
     }
 
     if (!roomTracker[room]) {
-      roomTracker[room] = [user]
+      roomTracker[room] = { blue: user, red: "" }
       socket.join(room)
     }
 
     console.log(roomTracker)
-
-    // if (roomTracker[room]) roomTracker[room].push(user)
-    // if (!roomTracker[room]) roomTracker[room] = [user]
-
-    // socket.on("disconnect", () => {
-    //   oldPlayerId = user
-    //   roomTracker[room] = roomTracker[room].filter(user => user !== socket.id)
-    // })
-
-    // if (roomTracker[room].length > roomLimit) {
-    //   roomTracker[room] = roomTracker[room].filter(user => user !== socket.id)
-    //   socket.emit("room-full", { user: user, roomTracker: roomTracker })
-    // } else {
-    //   socket.join(room)
-    // }
 
     // send document to client
     socket.emit("load-document", document.data)
