@@ -16,8 +16,10 @@ const io = require("socket.io")(3000, {
 interface RoomTracker {
   [room: string]: string[]
 }
+
+let oldPlayerId: string = ""
 const roomTracker: RoomTracker = {}
-const roomLimit = 2
+const roomLimit: number = 2
 
 // every time we connect it will run the function
 io.on("connection", (socket: Socket) => {
@@ -28,21 +30,42 @@ io.on("connection", (socket: Socket) => {
     // finding or creating document
     const document = await findOrCreateDocument(room)
 
-    // placing client in room
-    // or checking if room has more than 2 people
-    if (roomTracker[room]) roomTracker[room].push(user)
-    if (!roomTracker[room]) roomTracker[room] = [user]
-
+    // placing client in room and checking if room has more than 2 people
     socket.on("disconnect", () => {
+      oldPlayerId = user
       roomTracker[room] = roomTracker[room].filter(user => user !== socket.id)
     })
 
-    if (roomTracker[room].length > roomLimit) {
-      roomTracker[room] = roomTracker[room].filter(user => user !== socket.id)
+    if (roomTracker[room] && roomTracker[room].length >= 2) {
       socket.emit("room-full", { user: user, roomTracker: roomTracker })
-    } else {
+    }
+
+    if (roomTracker[room] && roomTracker[room].length < 2) {
+      roomTracker[room].push(user)
       socket.join(room)
     }
+
+    if (!roomTracker[room]) {
+      roomTracker[room] = [user]
+      socket.join(room)
+    }
+
+    console.log(roomTracker)
+
+    // if (roomTracker[room]) roomTracker[room].push(user)
+    // if (!roomTracker[room]) roomTracker[room] = [user]
+
+    // socket.on("disconnect", () => {
+    //   oldPlayerId = user
+    //   roomTracker[room] = roomTracker[room].filter(user => user !== socket.id)
+    // })
+
+    // if (roomTracker[room].length > roomLimit) {
+    //   roomTracker[room] = roomTracker[room].filter(user => user !== socket.id)
+    //   socket.emit("room-full", { user: user, roomTracker: roomTracker })
+    // } else {
+    //   socket.join(room)
+    // }
 
     // send document to client
     socket.emit("load-document", document.data)

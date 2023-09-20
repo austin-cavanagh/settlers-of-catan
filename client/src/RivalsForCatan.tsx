@@ -241,6 +241,8 @@ interface RoomTracker {
 }
 
 function RivalsForCatan() {
+  const [playerColor, setPlayerColor] = useState<string>("")
+
   const [inputValue, setInputValue] = useState<string>("")
   const [messages, setMessages] = useState<string[]>([])
 
@@ -655,6 +657,9 @@ function RivalsForCatan() {
       socket.off("room-full", roomFull)
     }
   }, [socket])
+
+  // determining which color the user is
+  useEffect(() => {}, [socket])
 
   function selectPayResource(card: CardDefinition) {
     const playerCards = turn === "blue" ? blueCards : redCards
