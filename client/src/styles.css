@@ -281,6 +281,7 @@ body {
   height: 91%;
   width: 100%;
   background-color: white;
+  overflow-y: auto;
 }
 
 .text-box {
@@ -311,4 +312,30 @@ body {
   display: flex;
   align-items: center;
   font-size: 14pt;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.message-icon {
+  height: 80%;
+  width: 8%;
+  border-radius: 50%;
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  margin-left: 1%;
+  margin-right: 1%;
+}
+
+.message {
+  height: 100%;
+  width: 92%;
+  display: flex;
+  align-items: center;
 }

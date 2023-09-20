@@ -17,7 +17,7 @@ import oreIcon from "./icons/ore-icon.png"
 import woolIcon from "./icons/wool-icon.png"
 
 import wood6 from "./wood-background/WOODGRAIN.jpg"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import city from "./Cards/other/city-back.jpg"
 import blueRoad from "./cards/blue-player/blue-road.jpg"
 import blueSettlement from "./cards/blue-player/blue-settlement.jpg"
@@ -245,6 +245,7 @@ function RivalsForCatan() {
 
   const [inputValue, setInputValue] = useState<string>("")
   const [messages, setMessages] = useState<string[]>([])
+  const chatBoxRef = useRef<HTMLDivElement | null>(null)
 
   const [startedTurn, setStartedTurn] = useState<boolean>(false)
 
@@ -602,6 +603,10 @@ function RivalsForCatan() {
 
   // sending client changes to server
   useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight
+    }
+
     if (socket == null || isLocalChange === false) return
 
     socket.emit("client-changes", messages)
@@ -659,7 +664,11 @@ function RivalsForCatan() {
   }, [socket])
 
   // determining which color the user is
-  useEffect(() => {}, [socket])
+  useEffect(() => {
+    if (socket == null) return
+
+    socket.on("color-from-server", setPlayerColor)
+  }, [socket])
 
   function selectPayResource(card: CardDefinition) {
     const playerCards = turn === "blue" ? blueCards : redCards
@@ -1242,7 +1251,7 @@ function RivalsForCatan() {
 
     setMessages(messages => {
       const newMessages = [...messages]
-      newMessages.push(inputValue)
+      newMessages.push(`${playerColor === "blue" ? "b" : "r"}:${inputValue}`)
       return newMessages
     })
 
@@ -1506,11 +1515,21 @@ function RivalsForCatan() {
           </button> */}
 
             <div className="message-box">
-              <div className="messages">
+              <div className="messages" ref={chatBoxRef}>
                 {messages.map((message, index) => {
                   return (
                     <div key={index} className="player-message">
-                      {message}
+                      <div
+                        className="message-icon"
+                        style={{
+                          backgroundImage: `url(${
+                            message.slice(0, 2) === "b:"
+                              ? blueShieldIcon
+                              : redShieldIcon
+                          })`,
+                        }}
+                      ></div>
+                      <div className="message">{message.slice(2)}</div>
                     </div>
                   )
                 })}

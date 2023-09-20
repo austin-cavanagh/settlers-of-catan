@@ -37,6 +37,10 @@ io.on("connection", (socket: Socket) => {
           roomTracker[room][color] = ""
         }
       }
+
+      if (!roomTracker[room].blue && !roomTracker[room].red) {
+        delete roomTracker[room]
+      }
     })
 
     if (
@@ -54,6 +58,7 @@ io.on("connection", (socket: Socket) => {
     ) {
       roomTracker[room].red = user
       socket.join(room)
+      socket.emit("color-from-server", "red")
     }
 
     if (
@@ -63,23 +68,14 @@ io.on("connection", (socket: Socket) => {
     ) {
       roomTracker[room].blue = user
       socket.join(room)
-    }
-
-    if (
-      roomTracker[room] &&
-      roomTracker[room].blue === "" &&
-      roomTracker[room].red === ""
-    ) {
-      roomTracker[room].blue = user
-      socket.join(room)
+      socket.emit("color-from-server", "blue")
     }
 
     if (!roomTracker[room]) {
       roomTracker[room] = { blue: user, red: "" }
       socket.join(room)
+      socket.emit("color-from-server", "blue")
     }
-
-    console.log(roomTracker)
 
     // send document to client
     socket.emit("load-document", document.data)
