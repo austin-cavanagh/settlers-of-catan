@@ -16,6 +16,37 @@ import lumberIcon from "./icons/lumber-icon.png"
 import oreIcon from "./icons/ore-icon.png"
 import woolIcon from "./icons/wool-icon.png"
 
+import wood6 from "./wood-background/WOODGRAIN.jpg"
+import { useEffect, useState } from "react"
+import city from "./Cards/other/city-back.jpg"
+import blueRoad from "./cards/blue-player/blue-road.jpg"
+import blueSettlement from "./cards/blue-player/blue-settlement.jpg"
+
+import {
+  startCenterCards,
+  CenterCard,
+  RegionCard,
+  startRegionCards,
+  blueStartHand,
+  redStartHand,
+  CardStats,
+} from "./centerCards.tsx"
+
+import {
+  CardDefinition,
+  blueStartingCards,
+  redStartingCards,
+} from "./startingCards.tsx"
+
+import {
+  productionRoll,
+  eventRoll,
+  EventDie,
+  ProductionDie,
+} from "./diceFunctions.tsx"
+
+import { boostedRegion } from "./boostedRegion.ts"
+
 const blueIconArray: string[] = [
   victoryIcon,
   strengthIcon,
@@ -47,47 +78,6 @@ const blueResourceArray: string[] = [
 ]
 
 const redResourceArray: string[] = [...blueResourceArray].reverse()
-
-import woodBackground from "./wood-texture-1.avif"
-import wood2 from "./wood2.jpeg"
-import wood3 from "./wood3.webp"
-import lightWood from "./light-brown-wood.jpeg"
-import darkWood from "./wood-dark-planks.jpeg"
-// import wood6 from "./wood8.jpeg"
-import wood6 from "./wood-background/WOODGRAIN.jpg"
-
-import { useEffect, useState } from "react"
-
-import harp from "./cards/eventHarp.png"
-
-import city from "./Cards/other/city-back.jpg"
-import blueRoad from "./cards/blue-player/blue-road.jpg"
-import blueSettlement from "./cards/blue-player/blue-settlement.jpg"
-
-import {
-  startCenterCards,
-  CenterCard,
-  RegionCard,
-  startRegionCards,
-  blueStartHand,
-  redStartHand,
-  CardStats,
-} from "./centerCards.tsx"
-
-import {
-  CardDefinition,
-  blueStartingCards,
-  redStartingCards,
-} from "./startingCards.tsx"
-
-import {
-  productionRoll,
-  eventRoll,
-  EventDie,
-  ProductionDie,
-} from "./diceFunctions.tsx"
-
-import { boostedRegion } from "./boostedRegion.ts"
 
 interface ResourceTracker {
   [key: string]: number
@@ -244,6 +234,10 @@ const StartPayState: PayState = {
   total: 0,
   cost: startCost,
   possibleMoves: [],
+}
+
+interface RoomTracker {
+  [room: string]: string[]
 }
 
 function RivalsForCatan() {
@@ -572,7 +566,7 @@ function RivalsForCatan() {
     })
   }, [strengthAdvantage, tradeAdvantage])
 
-  // socket io
+  // socket.io
   const [socket, setSocket] = useState<Socket>()
   const [isLocalChange, setIsLocalChange] = useState<boolean>(false)
   const { id: documentId } = useParams<string>()
@@ -587,6 +581,22 @@ function RivalsForCatan() {
       newSocket.disconnect()
     }
   }, [])
+
+  // getting old or new document from server
+  useEffect(() => {
+    if (socket == null) return
+
+    socket.once("load-document", data => {
+      setMessages(data)
+    })
+
+    socket.on("connect", () => {
+      socket.emit("get-document", {
+        documentId: documentId,
+        socketId: socket.id,
+      })
+    })
+  }, [socket, documentId])
 
   // sending client changes to server
   useEffect(() => {
@@ -605,36 +615,46 @@ function RivalsForCatan() {
       setMessages(messages)
     }
 
-    socket.on("recieve-changes", recieveMessages)
+    socket.on("server-changes", recieveMessages)
 
     return () => {
-      socket.off("recieve-changes", recieveMessages)
+      socket.off("server-changes", recieveMessages)
     }
   }, [socket])
 
-  // need to add react router to allow for more routes than just localhost:3000
-  useEffect(() => {
-    if (socket == null) return
-
-    socket.once("load-document", data => {
-      setMessages(data)
-    })
-
-    socket.emit("get-document", documentId)
-  }, [socket, documentId])
-
-  // updating database
+  // periodically updating database
   useEffect(() => {
     if (socket == null) return
 
     const interval = setInterval(() => {
-      socket.emit("save-document", messages)
+      // update database
+      socket.emit("update-database", messages)
+
+      // updating room tracker
+      socket.emit("update-room-tracker", socket.id)
     }, 1000)
 
     return () => {
       clearInterval(interval)
     }
   }, [socket, messages])
+
+  // limiting room to 2 people
+  useEffect(() => {
+    if (socket == null) return
+
+    const roomFull = () => {
+      const newUrl = crypto.randomUUID()
+      window.location.href = `http://localhost:5173/documents/${newUrl}`
+      alert(`Room is full - you are being directed to an empty webpage`)
+    }
+
+    socket.on("room-full", roomFull)
+
+    return () => {
+      socket.off("room-full", roomFull)
+    }
+  }, [socket])
 
   function selectPayResource(card: CardDefinition) {
     const playerCards = turn === "blue" ? blueCards : redCards

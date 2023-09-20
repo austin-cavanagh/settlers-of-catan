@@ -5,7 +5,6 @@ import {
   Route,
   Navigate,
 } from "react-router-dom"
-import { v4 as uuidV4 } from "uuid"
 
 function App() {
   return (
@@ -13,7 +12,9 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<Navigate to={`/documents/${uuidV4()}`} replace />}
+          element={
+            <Navigate to={`/documents/${crypto.randomUUID()}`} replace />
+          }
           index
         />
         <Route path="/documents/:id" element={<RivalsForCatan />} />

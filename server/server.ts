@@ -1,8 +1,9 @@
 import { Server, Socket } from "socket.io"
+import { rootCertificates } from "tls"
 
+const Document = require("./Document")
 const mongoose = require("mongoose")
 mongoose.connect("mongodb://localhost/google-docs-clone")
-const Document = require("./Document")
 
 // creating server on port 3000
 const io = require("socket.io")(3000, {
@@ -12,30 +13,55 @@ const io = require("socket.io")(3000, {
   },
 })
 
+interface RoomTracker {
+  [room: string]: string[]
+}
+const roomTracker: RoomTracker = {}
+const roomLimit = 2
+
 // every time we connect it will run the function
 io.on("connection", (socket: Socket) => {
-  socket.on("get-document", async documentId => {
+  socket.on("get-document", async data => {
+    const room = data.documentId
+    const user = data.socketId
+
     // finding or creating document
-    const document = await findOrCreateDocument(documentId)
-    // join places socket into its own room
-    socket.join(documentId)
+    const document = await findOrCreateDocument(room)
+
+    // placing client in room
+    // or checking if room has more than 2 people
+    if (roomTracker[room]) roomTracker[room].push(user)
+    if (!roomTracker[room]) roomTracker[room] = [user]
+
+    socket.on("disconnect", () => {
+      roomTracker[room] = roomTracker[room].filter(user => user !== socket.id)
+    })
+
+    if (roomTracker[room].length > roomLimit) {
+      roomTracker[room] = roomTracker[room].filter(user => user !== socket.id)
+      socket.emit("room-full", { user: user, roomTracker: roomTracker })
+    } else {
+      socket.join(room)
+    }
+
     // send document to client
     socket.emit("load-document", document.data)
 
     // client sends messages and server sends to other clients
     socket.on("client-changes", messages => {
-      // socket.broadcast sends message to everyone not on current socket
-      socket.broadcast.to(documentId).emit("recieve-changes", messages)
+      // .broadcast sends message to everyone not on current socket
+      // .to specifies which room to send data to
+      socket.broadcast.to(room).emit("server-changes", messages)
     })
 
     // saving data to database
-    socket.on("save-document", async data => {
-      await Document.findByIdAndUpdate(documentId, { data })
+    socket.on("update-database", async data => {
+      await Document.findByIdAndUpdate(room, { data })
     })
   })
 })
 
-// if we have a document with an Id return it
+// if we have a document with an id return it
 // otherwise create a new document
 async function findOrCreateDocument(id: string) {
   if (id == null) return
