@@ -17,7 +17,6 @@ interface RoomTracker {
   [room: string]: { [blue: string]: string }
 }
 
-let oldPlayerId: string = ""
 const roomTracker: RoomTracker = {}
 const roomLimit: number = 2
 
@@ -31,65 +30,50 @@ io.on("connection", (socket: Socket) => {
     const document = await findOrCreateDocument(room)
 
     // placing client in room and checking if room has more than 2 people
-    socket.on("disconnect", () => {
-      for (const [color, id] of Object.entries(roomTracker[room])) {
-        if (socket.id === id) {
-          roomTracker[room][color] = ""
-        }
-      }
-
-      if (!roomTracker[room].blue && !roomTracker[room].red) {
-        delete roomTracker[room]
-      }
-    })
-
-    if (
-      roomTracker[room] &&
-      roomTracker[room].blue !== "" &&
-      roomTracker[room].red !== ""
-    ) {
-      socket.emit("room-full", { user: user, roomTracker: roomTracker })
-    }
-
-    if (
-      roomTracker[room] &&
-      roomTracker[room].blue !== "" &&
-      roomTracker[room].red === ""
-    ) {
-      roomTracker[room].red = user
-      socket.join(room)
-      socket.emit("color-from-server", "red")
-    }
-
-    if (
-      roomTracker[room] &&
-      roomTracker[room].blue === "" &&
-      roomTracker[room].red !== ""
-    ) {
-      roomTracker[room].blue = user
-      socket.join(room)
-      socket.emit("color-from-server", "blue")
-    }
-
-    if (!roomTracker[room]) {
-      roomTracker[room] = { blue: user, red: "" }
-      socket.join(room)
-      socket.emit("color-from-server", "blue")
-    }
+    createRooms(socket, room, user)
 
     // send document to client
     socket.emit("load-document", document.data)
 
-    // client sends messages and server sends to other clients
-    socket.on("client-changes", messages => {
-      // .broadcast sends message to everyone not on current socket
-      // .to specifies which room to send data to
-      socket.broadcast.to(room).emit("server-changes", messages)
+    // client updates - messages
+    socket.on("client-changes-messages", messages => {
+      socket.broadcast.to(room).emit("server-changes-messages", messages)
+    })
+
+    // client updates - playerCards
+    socket.on("client-changes-playerCards", playerCards => {
+      socket.broadcast.to(room).emit("server-changes-playerCards", playerCards)
+    })
+
+    //client updates - playerHand
+    socket.on("client-changes-playerHand", playerHands => {
+      socket.broadcast.to(room).emit("server-changes-playerHands", playerHands)
+    })
+
+    // client updates - turn
+    socket.on("client-changes-turn", turn => {
+      socket.broadcast.to(room).emit("server-changes-turn", turn)
     })
 
     // saving data to database
-    socket.on("update-database", async data => {
-      await Document.findByIdAndUpdate(room, { data })
+    socket.on("update-database-messages", async messages => {
+      await Document.findByIdAndUpdate(room, { "data.messages": messages })
+    })
+
+    socket.on("update-database-playerCards", async playerCards => {
+      await Document.findByIdAndUpdate(room, {
+        "data.playerCards": playerCards,
+      })
+    })
+
+    socket.on("update-database-playerHands", async playerHands => {
+      await Document.findByIdAndUpdate(room, {
+        "data.playerHands": playerHands,
+      })
+    })
+
+    socket.on("update-database-turn", async turn => {
+      await Document.findByIdAndUpdate(room, { "data.turn": turn })
     })
   })
 })
@@ -103,5 +87,68 @@ async function findOrCreateDocument(id: string) {
 
   if (document) return document
 
-  return await Document.create({ _id: id, data: [] })
+  return await Document.create({
+    _id: id,
+    data: {
+      messages: [],
+      playerCards: {
+        blueCards: [],
+        redCards: [],
+      },
+      playerHands: {
+        blueHand: [],
+        redHand: [],
+      },
+      centerCards: [],
+      turn: "blue",
+    },
+  })
+}
+
+function createRooms(socket: Socket, room: string, user: string) {
+  socket.on("disconnect", () => {
+    for (const [color, id] of Object.entries(roomTracker[room])) {
+      if (socket.id === id) {
+        roomTracker[room][color] = ""
+      }
+    }
+
+    if (!roomTracker[room].blue && !roomTracker[room].red) {
+      delete roomTracker[room]
+    }
+  })
+
+  if (
+    roomTracker[room] &&
+    roomTracker[room].blue !== "" &&
+    roomTracker[room].red !== ""
+  ) {
+    socket.emit("room-full", { user: user, roomTracker: roomTracker })
+  }
+
+  if (
+    roomTracker[room] &&
+    roomTracker[room].blue !== "" &&
+    roomTracker[room].red === ""
+  ) {
+    roomTracker[room].red = user
+    socket.join(room)
+    socket.emit("color-from-server", "red")
+  }
+
+  if (
+    roomTracker[room] &&
+    roomTracker[room].blue === "" &&
+    roomTracker[room].red !== ""
+  ) {
+    roomTracker[room].blue = user
+    socket.join(room)
+    socket.emit("color-from-server", "blue")
+  }
+
+  if (!roomTracker[room]) {
+    roomTracker[room] = { blue: user, red: "" }
+    socket.join(room)
+    socket.emit("color-from-server", "blue")
+  }
 }

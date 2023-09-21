@@ -589,9 +589,29 @@ function RivalsForCatan() {
   useEffect(() => {
     if (socket == null) return
 
-    socket.once("load-document", data => {
-      setMessages(data)
-    })
+    socket.once(
+      "load-document",
+      ({
+        messages,
+        playerCards: { blueCards, redCards },
+        playerHands: { blueHand, redHand },
+        turn,
+      }) => {
+        console.log(redHand)
+
+        if (!blueCards[0]) return
+
+        setMessages(messages)
+
+        setBlueCards(blueCards)
+        setRedCards(redCards)
+
+        setBlueHand(blueHand)
+        setRedHand(redHand)
+
+        setTurn(turn)
+      }
+    )
 
     socket.on("connect", () => {
       socket.emit("get-document", {
@@ -601,59 +621,30 @@ function RivalsForCatan() {
     })
   }, [socket, documentId])
 
-  // sending client changes to server
-  useEffect(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight
-    }
-
-    if (socket == null || isLocalChange === false) return
-
-    socket.emit("client-changes", messages)
-
-    setIsLocalChange(false)
-  }, [messages])
-
-  // updating client messages from server
-  useEffect(() => {
-    if (socket == null) return
-
-    const recieveMessages = (messages: string[]) => {
-      setMessages(messages)
-    }
-
-    socket.on("server-changes", recieveMessages)
-
-    return () => {
-      socket.off("server-changes", recieveMessages)
-    }
-  }, [socket])
-
   // periodically updating database
   useEffect(() => {
     if (socket == null) return
 
     const interval = setInterval(() => {
-      // update database
-      socket.emit("update-database", messages)
-
-      // updating room tracker
-      socket.emit("update-room-tracker", socket.id)
+      socket.emit("update-database-messages", messages)
+      socket.emit("update-database-playerCards", { blueCards, redCards })
+      socket.emit("update-database-playerHands", { blueHand, redHand })
+      socket.emit("update-database-turn", turn)
     }, 1000)
 
     return () => {
       clearInterval(interval)
     }
-  }, [socket, messages])
+  }, [socket, messages, blueCards, redCards])
 
-  // limiting room to 2 people
+  // redirect user to new page if page is full
   useEffect(() => {
     if (socket == null) return
 
     const roomFull = () => {
       const newUrl = crypto.randomUUID()
       window.location.href = `http://localhost:5173/documents/${newUrl}`
-      alert(`Room is full - you are being directed to an empty webpage`)
+      alert(`Room is full - you are being redirected to an empty webpage`)
     }
 
     socket.on("room-full", roomFull)
@@ -668,6 +659,121 @@ function RivalsForCatan() {
     if (socket == null) return
 
     socket.on("color-from-server", setPlayerColor)
+  }, [socket])
+
+  // client updates - messages
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight
+    }
+
+    if (socket == null || isLocalChange === false) return
+
+    socket.emit("client-changes-messages", messages)
+
+    setIsLocalChange(false)
+  }, [messages])
+
+  // server updates - messages
+  useEffect(() => {
+    if (socket == null) return
+
+    const recieveMessages = (messages: string[]) => {
+      setMessages(messages)
+    }
+
+    socket.on("server-changes-messages", recieveMessages)
+
+    return () => {
+      socket.off("server-changes-messages", recieveMessages)
+    }
+  }, [socket])
+
+  // client updates - playerCards
+  useEffect(() => {
+    if (socket == null || isLocalChange === false) return
+
+    socket.emit("client-changes-playerCards", { blueCards, redCards })
+
+    setIsLocalChange(false)
+  }, [blueCards, redCards])
+
+  // server updates - playerCards
+  useEffect(() => {
+    if (socket == null) return
+
+    const recievePlayerCards = ({
+      blueCards,
+      redCards,
+    }: {
+      blueCards: CardDefinition[]
+      redCards: CardDefinition[]
+    }) => {
+      setBlueCards(blueCards)
+      setRedCards(redCards)
+    }
+
+    socket.on("server-changes-playerCards", recievePlayerCards)
+
+    return () => {
+      socket.off("server-changes-playerCards", recievePlayerCards)
+    }
+  }, [socket])
+
+  // client updates - playerHand
+  useEffect(() => {
+    if (socket == null || isLocalChange === false) return
+
+    console.log("working")
+    socket.emit("client-changes-playerHand", { blueHand, redHand })
+
+    setIsLocalChange(false)
+  }, [blueHand, redHand])
+
+  // server updates - playerHand
+  useEffect(() => {
+    if (socket == null) return
+
+    const recievePlayerHands = ({
+      blueHand,
+      redHand,
+    }: {
+      blueHand: CardStats[]
+      redHand: CardStats[]
+    }) => {
+      setBlueHand(blueHand)
+      setRedHand(redHand)
+    }
+
+    socket.on("server-changes-playerHands", recievePlayerHands)
+
+    return () => {
+      socket.off("server-changes-playerHands", recievePlayerHands)
+    }
+  }, [socket])
+
+  // client updates - turn
+  useEffect(() => {
+    if (socket == null || isLocalChange === false) return
+
+    socket.emit("client-changes-turn", turn)
+
+    setIsLocalChange(false)
+  }, [turn])
+
+  // server updates - turn
+  useEffect(() => {
+    if (socket == null) return
+
+    const recieveTurn = (turn: string) => {
+      setTurn(turn)
+    }
+
+    socket.on("server-changes-turn", recieveTurn)
+
+    return () => {
+      socket.off("server-changes-turn", recieveTurn)
+    }
   }, [socket])
 
   function selectPayResource(card: CardDefinition) {
@@ -720,6 +826,8 @@ function RivalsForCatan() {
     })
 
     setPlayerRegionColors(newColors)
+
+    setIsLocalChange(true)
   }
 
   function setupPayState() {
@@ -1093,6 +1201,8 @@ function RivalsForCatan() {
 
     // reset colors
     turn === "blue" ? setBlueColors(newColors) : setRedColors(newColors)
+
+    setIsLocalChange(true)
   }
 
   function endTurn() {
@@ -1135,6 +1245,8 @@ function RivalsForCatan() {
     setTurn(turn => {
       return turn === "blue" ? "red" : "blue"
     })
+
+    setIsLocalChange(true)
   }
 
   function startGame() {
@@ -1210,6 +1322,8 @@ function RivalsForCatan() {
     })
 
     resolveEventDice(eventDie.name)
+
+    setIsLocalChange(true)
   }
 
   function resolveEventDice(event: string) {
@@ -1307,22 +1421,24 @@ function RivalsForCatan() {
 
         <div className="bottom-section">
           <div className="player-hand">
-            {(turn === "blue" ? blueHand : redHand).map((card, index) => {
-              return (
-                <div
-                  className="player-card"
-                  key={index}
-                  style={{
-                    backgroundImage: `url(${card.image})`,
-                  }}
-                  onClick={() => {
-                    if (payState.possibleMoves.length === 0) {
-                      selectCardFromHand(card)
-                    }
-                  }}
-                ></div>
-              )
-            })}
+            {(playerColor === "blue" ? blueHand : redHand).map(
+              (card, index) => {
+                return (
+                  <div
+                    className="player-card"
+                    key={index}
+                    style={{
+                      backgroundImage: `url(${card.image})`,
+                    }}
+                    onClick={() => {
+                      if (payState.possibleMoves.length === 0) {
+                        selectCardFromHand(card)
+                      }
+                    }}
+                  ></div>
+                )
+              }
+            )}
           </div>
 
           <div className="board">
@@ -1490,7 +1606,18 @@ function RivalsForCatan() {
                 }
               }}
             >
-              Trade
+              {`Color: ${playerColor}`}
+            </button>
+
+            <button
+              className="button"
+              onClick={() => {
+                if (payState.possibleMoves.length === 0) {
+                  // trade
+                }
+              }}
+            >
+              {`Turn: ${turn}`}
             </button>
 
             <button
