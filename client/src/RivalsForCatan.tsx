@@ -567,6 +567,8 @@ function RivalsForCatan() {
     })
   }, [strengthAdvantage, tradeAdvantage])
 
+  console.log(centerCards)
+
   // socket.io
   const [socket, setSocket] = useState<Socket>()
   const [isLocalChange, setIsLocalChange] = useState<boolean>(false)
@@ -612,7 +614,7 @@ function RivalsForCatan() {
         setProductionDie(productionDie)
         setEventDie(eventDie)
 
-        // setCenterCards(centerCards)
+        setCenterCards(centerCards)
       }
     )
 
@@ -824,29 +826,29 @@ function RivalsForCatan() {
     }
   }, [socket])
 
-  //   // client updates - centerCards
-  //   useEffect(() => {
-  //     if (socket == null || isLocalChange === false) return
+  // client updates - centerCards
+  useEffect(() => {
+    if (socket == null || isLocalChange === false) return
 
-  //     socket.emit("client-changes-centerCards", centerCards)
+    socket.emit("client-changes-centerCards", centerCards)
 
-  //     setIsLocalChange(false)
-  //   }, [centerCards])
+    setIsLocalChange(false)
+  }, [centerCards])
 
-  //   // server updates - centerCards
-  //   useEffect(() => {
-  //     if (socket == null) return
+  // server updates - centerCards
+  useEffect(() => {
+    if (socket == null) return
 
-  //     const recieveCenterCards = (centerCards: CenterCard[]) => {
-  //       setCenterCards(centerCards)
-  //     }
+    const recieveCenterCards = (centerCards: CenterCard[]) => {
+      setCenterCards(centerCards)
+    }
 
-  //     socket.on("server-changes-centerCards", recieveCenterCards)
+    socket.on("server-changes-centerCards", recieveCenterCards)
 
-  //     return () => {
-  //       socket.off("server-changes-centerCards", recieveCenterCards)
-  //     }
-  //   }, [socket])
+    return () => {
+      socket.off("server-changes-centerCards", recieveCenterCards)
+    }
+  }, [socket])
 
   function selectPayResource(card: CardDefinition) {
     const playerCards = turn === "blue" ? blueCards : redCards

@@ -60,10 +60,10 @@ io.on("connection", (socket: Socket) => {
       socket.broadcast.to(room).emit("server-changes-dice", dice)
     })
 
-    // // client updates - centerCards
-    // socket.on("client-changes-centerCards", centerCards => {
-    //   socket.broadcast.to(room).emit("server-changes-centerCards", centerCards)
-    // })
+    // client updates - centerCards
+    socket.on("client-changes-centerCards", centerCards => {
+      socket.broadcast.to(room).emit("server-changes-centerCards", centerCards)
+    })
 
     // database updates - messages
     socket.on("update-database-messages", async messages => {
@@ -94,12 +94,12 @@ io.on("connection", (socket: Socket) => {
       await Document.findByIdAndUpdate(room, { "data.dice": dice })
     })
 
-    // // database updates - centerCards
-    // socket.on("update-database-centerCards", async centerCards => {
-    //   await Document.findByIdAndUpdate(room, {
-    //     "data.centerCards": centerCards,
-    //   })
-    // })
+    // database updates - centerCards
+    socket.on("update-database-centerCards", async centerCards => {
+      await Document.findByIdAndUpdate(room, {
+        "data.centerCards": centerCards,
+      })
+    })
   })
 })
 
