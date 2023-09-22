@@ -13,8 +13,12 @@ const DocumentSchema = new Schema({
       blueHand: [Object],
       redHand: [Object],
     },
-    centerCards: [Object],
     turn: String,
+    dice: {
+      productionDie: Object,
+      eventDie: Object,
+    },
+    centerCards: [Object],
   },
 })
 

@@ -46,7 +46,7 @@ io.on("connection", (socket: Socket) => {
     })
 
     //client updates - playerHand
-    socket.on("client-changes-playerHand", playerHands => {
+    socket.on("client-changes-playerHands", playerHands => {
       socket.broadcast.to(room).emit("server-changes-playerHands", playerHands)
     })
 
@@ -55,26 +55,51 @@ io.on("connection", (socket: Socket) => {
       socket.broadcast.to(room).emit("server-changes-turn", turn)
     })
 
-    // saving data to database
+    // client updates - dice
+    socket.on("client-changes-dice", dice => {
+      socket.broadcast.to(room).emit("server-changes-dice", dice)
+    })
+
+    // // client updates - centerCards
+    // socket.on("client-changes-centerCards", centerCards => {
+    //   socket.broadcast.to(room).emit("server-changes-centerCards", centerCards)
+    // })
+
+    // database updates - messages
     socket.on("update-database-messages", async messages => {
       await Document.findByIdAndUpdate(room, { "data.messages": messages })
     })
 
+    // database updates - playerCards
     socket.on("update-database-playerCards", async playerCards => {
       await Document.findByIdAndUpdate(room, {
         "data.playerCards": playerCards,
       })
     })
 
+    // database updates - playerHands
     socket.on("update-database-playerHands", async playerHands => {
       await Document.findByIdAndUpdate(room, {
         "data.playerHands": playerHands,
       })
     })
 
+    // database updates - turn
     socket.on("update-database-turn", async turn => {
       await Document.findByIdAndUpdate(room, { "data.turn": turn })
     })
+
+    // database updates - dice
+    socket.on("update-database-dice", async dice => {
+      await Document.findByIdAndUpdate(room, { "data.dice": dice })
+    })
+
+    // // database updates - centerCards
+    // socket.on("update-database-centerCards", async centerCards => {
+    //   await Document.findByIdAndUpdate(room, {
+    //     "data.centerCards": centerCards,
+    //   })
+    // })
   })
 })
 
@@ -99,8 +124,12 @@ async function findOrCreateDocument(id: string) {
         blueHand: [],
         redHand: [],
       },
-      centerCards: [],
       turn: "blue",
+      dice: {
+        productionDie: {},
+        eventDie: {},
+      },
+      centerCards: [],
     },
   })
 }

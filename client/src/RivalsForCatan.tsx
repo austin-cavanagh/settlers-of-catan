@@ -247,8 +247,6 @@ function RivalsForCatan() {
   const [messages, setMessages] = useState<string[]>([])
   const chatBoxRef = useRef<HTMLDivElement | null>(null)
 
-  const [startedTurn, setStartedTurn] = useState<boolean>(false)
-
   const [payState, setPayState] = useState<PayState>(StartPayState)
 
   // vitory points
@@ -596,9 +594,9 @@ function RivalsForCatan() {
         playerCards: { blueCards, redCards },
         playerHands: { blueHand, redHand },
         turn,
+        dice: { productionDie, eventDie },
+        centerCards,
       }) => {
-        console.log(redHand)
-
         if (!blueCards[0]) return
 
         setMessages(messages)
@@ -610,6 +608,11 @@ function RivalsForCatan() {
         setRedHand(redHand)
 
         setTurn(turn)
+
+        setProductionDie(productionDie)
+        setEventDie(eventDie)
+
+        // setCenterCards(centerCards)
       }
     )
 
@@ -630,12 +633,24 @@ function RivalsForCatan() {
       socket.emit("update-database-playerCards", { blueCards, redCards })
       socket.emit("update-database-playerHands", { blueHand, redHand })
       socket.emit("update-database-turn", turn)
+      socket.emit("update-database-dice", { productionDie, eventDie })
+      socket.emit("update-database-centerCards", centerCards)
     }, 1000)
 
     return () => {
       clearInterval(interval)
     }
-  }, [socket, messages, blueCards, redCards])
+  }, [
+    socket,
+    messages,
+    blueCards,
+    redCards,
+    blueHand,
+    redHand,
+    turn,
+    productionDie,
+    eventDie,
+  ])
 
   // redirect user to new page if page is full
   useEffect(() => {
@@ -724,8 +739,7 @@ function RivalsForCatan() {
   useEffect(() => {
     if (socket == null || isLocalChange === false) return
 
-    console.log("working")
-    socket.emit("client-changes-playerHand", { blueHand, redHand })
+    socket.emit("client-changes-playerHands", { blueHand, redHand })
 
     setIsLocalChange(false)
   }, [blueHand, redHand])
@@ -741,6 +755,9 @@ function RivalsForCatan() {
       blueHand: CardStats[]
       redHand: CardStats[]
     }) => {
+      console.log("blue", blueHand)
+      console.log("red", redHand)
+
       setBlueHand(blueHand)
       setRedHand(redHand)
     }
@@ -775,6 +792,61 @@ function RivalsForCatan() {
       socket.off("server-changes-turn", recieveTurn)
     }
   }, [socket])
+
+  // client updates - dice
+  useEffect(() => {
+    if (socket == null || isLocalChange === false) return
+
+    socket.emit("client-changes-dice", { productionDie, eventDie })
+
+    setIsLocalChange(false)
+  }, [productionDie, eventDie])
+
+  // server updates - dice
+  useEffect(() => {
+    if (socket == null) return
+
+    const recieveDice = ({
+      productionDie,
+      eventDie,
+    }: {
+      productionDie: ProductionDie
+      eventDie: EventDie
+    }) => {
+      setProductionDie(productionDie)
+      setEventDie(eventDie)
+    }
+
+    socket.on("server-changes-dice", recieveDice)
+
+    return () => {
+      socket.off("server-changes-dice", recieveDice)
+    }
+  }, [socket])
+
+  //   // client updates - centerCards
+  //   useEffect(() => {
+  //     if (socket == null || isLocalChange === false) return
+
+  //     socket.emit("client-changes-centerCards", centerCards)
+
+  //     setIsLocalChange(false)
+  //   }, [centerCards])
+
+  //   // server updates - centerCards
+  //   useEffect(() => {
+  //     if (socket == null) return
+
+  //     const recieveCenterCards = (centerCards: CenterCard[]) => {
+  //       setCenterCards(centerCards)
+  //     }
+
+  //     socket.on("server-changes-centerCards", recieveCenterCards)
+
+  //     return () => {
+  //       socket.off("server-changes-centerCards", recieveCenterCards)
+  //     }
+  //   }, [socket])
 
   function selectPayResource(card: CardDefinition) {
     const playerCards = turn === "blue" ? blueCards : redCards
@@ -1210,28 +1282,29 @@ function RivalsForCatan() {
     const loops = 3 - playerHand.length
     const setPlayerHand = turn === "blue" ? setBlueHand : setRedHand
 
-    setStartedTurn(false)
+    rollDice()
 
     // replenish hand if less than 3 cards
+    let newCenterCards = [...centerCards]
+    let newPlayerHand = [...(turn === "blue" ? blueHand : redHand)]
+
     for (let i = 0; i < loops; i++) {
-      setCenterCards(centerCards => {
-        return centerCards.map(cardStack => {
-          if (cardStack.cardStack === "basic") {
-            const basicCards = cardStack.cardsInStack
-            const newPlayerCard: CardStats = basicCards[0]
+      newCenterCards = newCenterCards.map(cardStack => {
+        if (cardStack.cardStack === "basic") {
+          const basicCards = [...cardStack.cardsInStack]
 
-            setPlayerHand(playerHand => {
-              playerHand.push(newPlayerCard)
-              return playerHand
-            })
+          const newPlayerCard: CardStats | undefined = basicCards.shift()
 
-            cardStack.cardsInStack = basicCards.slice(1, basicCards.length)
-          }
+          if (newPlayerCard) newPlayerHand.push(newPlayerCard)
 
-          return cardStack
-        })
+          cardStack.cardsInStack = basicCards
+        }
+        return cardStack
       })
     }
+
+    setCenterCards(newCenterCards)
+    setPlayerHand(newPlayerHand)
 
     // reset build modes
     resetBuildModes()
@@ -1249,13 +1322,7 @@ function RivalsForCatan() {
     setIsLocalChange(true)
   }
 
-  function startGame() {
-    // game started
-  }
-
   function rollDice() {
-    setStartedTurn(true)
-
     const productionDie = productionRoll()
     setProductionDie(productionDie)
 
@@ -1377,6 +1444,7 @@ function RivalsForCatan() {
   return (
     <>
       <div className="window" style={{ backgroundImage: `url(${wood6})` }}>
+        {/* top resource bar */}
         <div className="resource-tracker">
           <div className="color-bar red-background">
             {redResourceArray.map((resource, index) => {
@@ -1431,7 +1499,10 @@ function RivalsForCatan() {
                       backgroundImage: `url(${card.image})`,
                     }}
                     onClick={() => {
-                      if (payState.possibleMoves.length === 0) {
+                      if (
+                        playerColor === turn &&
+                        payState.possibleMoves.length === 0
+                      ) {
                         selectCardFromHand(card)
                       }
                     }}
@@ -1442,6 +1513,8 @@ function RivalsForCatan() {
           </div>
 
           <div className="board">
+            {/* if blue player -> display red */}
+
             {/* red board */}
             <div className="player-board rotate">
               {redCards.map((card: CardDefinition, index: number) => {
@@ -1489,9 +1562,7 @@ function RivalsForCatan() {
                         if (buildBasic.active === "red") buildCard(index)
                       }
                     }}
-                  >
-                    {/* {` ${card.index} ${card.type}`} */}
-                  </div>
+                  ></div>
                 )
               })}
             </div>
@@ -1505,7 +1576,10 @@ function RivalsForCatan() {
                     key={index}
                     style={{ backgroundImage: `url(${stack.image})` }}
                     onClick={() => {
-                      if (payState.possibleMoves.length === 0) {
+                      if (
+                        playerColor === turn &&
+                        payState.possibleMoves.length === 0
+                      ) {
                         if (
                           stack.cardStack === "road" ||
                           stack.cardStack === "settlement" ||
@@ -1519,6 +1593,8 @@ function RivalsForCatan() {
                 )
               })}
             </div>
+
+            {/* if blue player -> display red */}
 
             {/* blue board */}
             <div className="player-board rotate">
@@ -1577,12 +1653,12 @@ function RivalsForCatan() {
           <div className="right-bar">
             <div className="dice-div">
               <div
-                className={`dice ${startedTurn === true ? "" : "hide"}`}
+                className={`dice ${eventDie !== undefined ? "" : "hide"}`}
                 style={{ backgroundImage: `url(${eventDie?.image})` }}
               ></div>
               <div
                 className={`dice margin-left ${
-                  startedTurn === true ? "" : "hide"
+                  productionDie !== undefined ? "" : "hide"
                 }`}
                 style={{ backgroundImage: `url(${productionDie?.image})` }}
               ></div>
@@ -1592,11 +1668,11 @@ function RivalsForCatan() {
               className="button"
               onClick={() => {
                 if (payState.possibleMoves.length === 0) {
-                  rollDice()
+                  //   rollDice()
                 }
               }}
             >
-              Roll Dice
+              Start Game
             </button>
             <button
               className="button"
@@ -1623,7 +1699,10 @@ function RivalsForCatan() {
             <button
               className="button margin-bottom"
               onClick={() => {
-                if (payState.possibleMoves.length === 0) {
+                if (
+                  playerColor === turn &&
+                  payState.possibleMoves.length === 0
+                ) {
                   endTurn()
                 }
               }}
@@ -1634,7 +1713,7 @@ function RivalsForCatan() {
             className="end-turn"
             onClick={() => {
               if (payState.possibleMoves.length === 0) {
-                startGame()
+                //
               }
             }}
           >
