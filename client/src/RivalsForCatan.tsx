@@ -241,6 +241,8 @@ interface RoomTracker {
 }
 
 function RivalsForCatan() {
+  const [gameStarted, setGameStarted] = useState<boolean>(false)
+
   const [playerColor, setPlayerColor] = useState<string>("")
 
   const [inputValue, setInputValue] = useState<string>("")
@@ -567,8 +569,6 @@ function RivalsForCatan() {
     })
   }, [strengthAdvantage, tradeAdvantage])
 
-  console.log(centerCards)
-
   // socket.io
   const [socket, setSocket] = useState<Socket>()
   const [isLocalChange, setIsLocalChange] = useState<boolean>(false)
@@ -598,6 +598,7 @@ function RivalsForCatan() {
         turn,
         dice: { productionDie, eventDie },
         centerCards,
+        gameStarted,
       }) => {
         if (!blueCards[0]) return
 
@@ -615,6 +616,8 @@ function RivalsForCatan() {
         setEventDie(eventDie)
 
         setCenterCards(centerCards)
+
+        setGameStarted(gameStarted)
       }
     )
 
@@ -637,6 +640,7 @@ function RivalsForCatan() {
       socket.emit("update-database-turn", turn)
       socket.emit("update-database-dice", { productionDie, eventDie })
       socket.emit("update-database-centerCards", centerCards)
+      socket.emit("update-database-gameStarted", gameStarted)
     }, 1000)
 
     return () => {
@@ -652,6 +656,8 @@ function RivalsForCatan() {
     turn,
     productionDie,
     eventDie,
+    centerCards,
+    gameStarted,
   ])
 
   // redirect user to new page if page is full
@@ -757,9 +763,6 @@ function RivalsForCatan() {
       blueHand: CardStats[]
       redHand: CardStats[]
     }) => {
-      console.log("blue", blueHand)
-      console.log("red", redHand)
-
       setBlueHand(blueHand)
       setRedHand(redHand)
     }
@@ -849,6 +852,39 @@ function RivalsForCatan() {
       socket.off("server-changes-centerCards", recieveCenterCards)
     }
   }, [socket])
+
+  // client updates - gameStarted
+  useEffect(() => {
+    if (socket == null || isLocalChange === false) return
+
+    socket.emit("client-changes-gameStarted", gameStarted)
+
+    setIsLocalChange(false)
+  }, [gameStarted])
+
+  // server updates - gameStarted
+  useEffect(() => {
+    if (socket == null) return
+
+    const recieveGameStarted = (gameStarted: boolean) => {
+      setGameStarted(gameStarted)
+    }
+
+    socket.on("server-changes-gameStarted", recieveGameStarted)
+
+    return () => {
+      socket.off("server-changes-gameStarted", recieveGameStarted)
+    }
+  }, [socket])
+
+  function startGame() {
+    setIsLocalChange(true)
+    setGameStarted(true)
+  }
+
+  function checkWin() {
+    // console.log("strength", strengthAdvantage)
+  }
 
   function selectPayResource(card: CardDefinition) {
     const playerCards = turn === "blue" ? blueCards : redCards
@@ -1670,21 +1706,11 @@ function RivalsForCatan() {
               className="button"
               onClick={() => {
                 if (payState.possibleMoves.length === 0) {
-                  //   rollDice()
-                }
-              }}
-            >
-              Start Game
-            </button>
-            <button
-              className="button"
-              onClick={() => {
-                if (payState.possibleMoves.length === 0) {
                   // trade
                 }
               }}
             >
-              {`Color: ${playerColor}`}
+              {`Color: ${playerColor === "blue" ? "Blue" : "Red"}`}
             </button>
 
             <button
@@ -1695,7 +1721,7 @@ function RivalsForCatan() {
                 }
               }}
             >
-              {`Turn: ${turn}`}
+              {`Turn: ${turn === "blue" ? "Blue" : "Red"}`}
             </button>
 
             <button
@@ -1711,22 +1737,17 @@ function RivalsForCatan() {
             >
               End Turn
             </button>
-            {/* <button
-            className="end-turn"
-            onClick={() => {
-              if (payState.possibleMoves.length === 0) {
-                //
-              }
-            }}
-          >
-            Start Game
-          </button> */}
 
             <div className="message-box">
               <div className="messages" ref={chatBoxRef}>
                 {messages.map((message, index) => {
                   return (
-                    <div key={index} className="player-message">
+                    <div
+                      key={index}
+                      className={`player-message ${
+                        message[0] === "b" ? "blue-message" : "red-message"
+                      }`}
+                    >
                       <div
                         className="message-icon"
                         style={{
@@ -1748,6 +1769,8 @@ function RivalsForCatan() {
                   className="text"
                   value={inputValue}
                   onChange={handleChange}
+                  maxLength={30}
+                  placeholder="Message..."
                 />
                 <button className="send-button">Send</button>
               </form>
@@ -1755,6 +1778,27 @@ function RivalsForCatan() {
           </div>
         </div>
       </div>
+      {gameStarted === false ? (
+        <div className={`main-menu`}>
+          <button
+            className="menu-button"
+            onClick={() => {
+              if (playerColor === turn && payState.possibleMoves.length === 0) {
+                startGame()
+              }
+            }}
+          >
+            Start Game
+          </button>
+        </div>
+      ) : (
+        <div></div>
+      )}
+
+      {/* <div className={`main-menu`}>
+        <div className="menu-message">Blue Player Wins!</div>
+        <button className="menu-button">Restart</button>
+      </div> */}
     </>
   )
 }

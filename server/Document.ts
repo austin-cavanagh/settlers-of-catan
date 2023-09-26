@@ -19,6 +19,7 @@ const DocumentSchema = new Schema({
       eventDie: Object,
     },
     centerCards: [Object],
+    gameStarted: Boolean,
   },
 })
 

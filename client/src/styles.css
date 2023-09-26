@@ -275,6 +275,9 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: 0.5vh solid gold; /* Basic gold border */
+  box-shadow: 0 0 1.5vh gold, /* Outer glow */ 0 0 1.5vh darkgoldenrod,
+    /* Outer darker glow for depth */ inset 0 0 1vh gold; /* Inner glow */
 }
 
 .messages {
@@ -317,6 +320,14 @@ body {
   align-items: center;
 }
 
+.blue-message {
+  background-color: #1d8dfd;
+}
+
+.red-message {
+  background-color: #fd6146;
+}
+
 .message-icon {
   height: 80%;
   width: 8%;
@@ -338,4 +349,43 @@ body {
   width: 92%;
   display: flex;
   align-items: center;
+}
+
+/* main menu */
+.main-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-message {
+  color: white;
+  font-size: 50pt;
+  margin-bottom: 10pt;
+}
+
+.menu-button {
+  font-size: 24pt;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  padding: 5pt;
+  border: none;
+}
+
+.menu-button:hover {
+  background-color: black;
+  color: white;
+}
+
+.hide {
+  height: 0;
+  width: 0;
 }

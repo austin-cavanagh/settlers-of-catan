@@ -65,6 +65,11 @@ io.on("connection", (socket: Socket) => {
       socket.broadcast.to(room).emit("server-changes-centerCards", centerCards)
     })
 
+    // client updates - gameStarted
+    socket.on("client-changes-gameStarted", gameStarted => {
+      socket.broadcast.to(room).emit("server-changes-gameStarted", gameStarted)
+    })
+
     // database updates - messages
     socket.on("update-database-messages", async messages => {
       await Document.findByIdAndUpdate(room, { "data.messages": messages })
@@ -100,6 +105,13 @@ io.on("connection", (socket: Socket) => {
         "data.centerCards": centerCards,
       })
     })
+
+    // database updates - gameStarted
+    socket.on("update-database-gameStarted", async gameStarted => {
+      await Document.findByIdAndUpdate(room, {
+        "data.gameStarted": gameStarted,
+      })
+    })
   })
 })
 
@@ -130,6 +142,7 @@ async function findOrCreateDocument(id: string) {
         eventDie: {},
       },
       centerCards: [],
+      gameStarted: false,
     },
   })
 }
