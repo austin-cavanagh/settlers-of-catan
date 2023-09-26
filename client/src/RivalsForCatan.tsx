@@ -2,6 +2,11 @@ import { io } from "socket.io-client"
 import { Socket } from "socket.io-client"
 import { useParams } from "react-router-dom"
 
+import {
+  RedPlayerResources,
+  BluePlayerResources,
+} from "./RedPlayerResources.tsx"
+
 import blueShieldIcon from "./icons/blue-shield-icon.png"
 import redShieldIcon from "./icons/red-shield-icon.png"
 import victoryIcon from "./icons/victory-icon.png"
@@ -46,6 +51,9 @@ import {
 } from "./diceFunctions.tsx"
 
 import { boostedRegion } from "./boostedRegion.ts"
+import { EndScreen } from "./EndScreen.tsx"
+import { StartScreen } from "./StartScreen.tsx"
+import { Dice } from "./Dice.tsx"
 
 const blueIconArray: string[] = [
   victoryIcon,
@@ -145,28 +153,6 @@ const startBuildMode: BuildMode = {
   },
 }
 
-interface BuildRegion {
-  active: string
-  buildSpots: number[]
-  resourceType1: string | undefined
-  diceNumber1: number | undefined
-  image1: string | undefined
-  resourceType2: string | undefined
-  diceNumber2: number | undefined
-  image2: string | undefined
-}
-
-const startBuildRegion: BuildRegion = {
-  active: "",
-  buildSpots: [],
-  resourceType1: "",
-  diceNumber1: 0,
-  image1: "",
-  resourceType2: "",
-  diceNumber2: 0,
-  image2: "",
-}
-
 const startColors: string[] = new Array(55).fill("transparent")
 
 const startSettlements: number[] = [27, 29]
@@ -217,13 +203,6 @@ const startVictoryPoints: VictoryPointsTracker = {
   blue: 2,
 }
 
-interface Moves {
-  [index: number]: {
-    resource: string
-    amount: number
-  }
-}
-
 interface PayState {
   total: number
   cost: Resources
@@ -234,10 +213,6 @@ const StartPayState: PayState = {
   total: 0,
   cost: startCost,
   possibleMoves: [],
-}
-
-interface RoomTracker {
-  [room: string]: string[]
 }
 
 function RivalsForCatan() {
@@ -270,13 +245,7 @@ function RivalsForCatan() {
   // cards setup
   const [centerCards, setCenterCards] = useState<CenterCard[]>(startCenterCards)
 
-  // states for turns
-  const [collectedCards, setCollectedCards] = useState({
-    blue: false,
-    red: false,
-  })
   const [turn, setTurn] = useState<string>("blue")
-  const [collectResources, setCollectResources] = useState<boolean>(false)
 
   // player cards
   const [blueHand, setBlueHand] = useState<CardStats[]>(blueStartHand)
@@ -895,8 +864,6 @@ function RivalsForCatan() {
     if (tradeAdvantage === "blue") blueVictoryPoints++
     if (tradeAdvantage === "red") redVictoryPoints++
 
-    console.log(redVictoryPoints)
-
     if (blueVictoryPoints >= 10) playerWins("blue")
     if (redVictoryPoints >= 10) playerWins("red")
   }
@@ -1065,12 +1032,15 @@ function RivalsForCatan() {
     if (playerResources.wool < cost.wool) return
 
     setBuildingCost(buildingCost => {
-      buildingCost.brick = stack.cardsInStack[0].brick
-      buildingCost.gold = stack.cardsInStack[0].gold
-      buildingCost.grain = stack.cardsInStack[0].grain
-      buildingCost.lumber = stack.cardsInStack[0].lumber
-      buildingCost.ore = stack.cardsInStack[0].ore
-      return buildingCost
+      const { brick, gold, grain, lumber, ore } = stack.cardsInStack[0]
+      return {
+        ...buildingCost,
+        brick,
+        gold,
+        grain,
+        lumber,
+        ore,
+      }
     })
 
     // if road
@@ -1504,49 +1474,21 @@ function RivalsForCatan() {
       <div className="window" style={{ backgroundImage: `url(${wood6})` }}>
         {/* top resource bar */}
         <div className="resource-tracker">
-          <div className="color-bar red-background">
-            {redResourceArray.map((resource, index) => {
-              return (
-                <div className="resource-parent" key={index}>
-                  <div
-                    className="circle"
-                    style={{ backgroundImage: `url(${redIconArray[index]})` }}
-                  ></div>
-                  <div className={`resource ${turn}`}>{`${
-                    redResources[resource] +
-                    (strengthAdvantage === "red" ? 1 : 0) +
-                    (tradeAdvantage === "red" ? 1 : 0)
-                  }`}</div>
-                </div>
-              )
-            })}
-            <div
-              className="circle big"
-              style={{ backgroundImage: `url(${redShieldIcon})` }}
-            ></div>
-          </div>
+          <RedPlayerResources
+            redResourceArray={redResourceArray}
+            redResources={redResources}
+            strengthAdvantage={strengthAdvantage}
+            tradeAdvantage={tradeAdvantage}
+            turn={turn}
+          />
 
-          <div className="color-bar blue-background">
-            <div
-              className="circle big"
-              style={{ backgroundImage: `url(${blueShieldIcon})` }}
-            ></div>
-            {blueResourceArray.map((resource, index) => {
-              return (
-                <div className="resource-parent" key={index}>
-                  <div
-                    className="circle"
-                    style={{ backgroundImage: `url(${blueIconArray[index]})` }}
-                  ></div>
-                  <div className={`resource ${turn}`}>{`${
-                    blueResources[resource] +
-                    (strengthAdvantage === "blue" ? 1 : 0) +
-                    (tradeAdvantage === "blue" ? 1 : 0)
-                  }`}</div>
-                </div>
-              )
-            })}
-          </div>
+          <BluePlayerResources
+            blueResourceArray={blueResourceArray}
+            blueResources={blueResources}
+            strengthAdvantage={strengthAdvantage}
+            tradeAdvantage={tradeAdvantage}
+            turn={turn}
+          />
         </div>
 
         <div className="bottom-section">
@@ -1575,8 +1517,6 @@ function RivalsForCatan() {
           </div>
 
           <div className="board">
-            {/* if blue player -> display red */}
-
             {/* red board */}
             <div className="player-board rotate">
               {redCards.map((card: CardDefinition, index: number) => {
@@ -1704,27 +1644,14 @@ function RivalsForCatan() {
                         if (buildBasic.active === "blue") buildCard(index)
                       }
                     }}
-                  >
-                    {/* {` ${card.index} ${card.type}`} */}
-                  </div>
+                  ></div>
                 )
               })}
             </div>
           </div>
 
           <div className="right-bar">
-            <div className="dice-div">
-              <div
-                className={`dice ${eventDie !== undefined ? "" : "hide"}`}
-                style={{ backgroundImage: `url(${eventDie?.image})` }}
-              ></div>
-              <div
-                className={`dice margin-left ${
-                  productionDie !== undefined ? "" : "hide"
-                }`}
-                style={{ backgroundImage: `url(${productionDie?.image})` }}
-              ></div>
-            </div>
+            <Dice eventDie={eventDie} productionDie={productionDie} />
 
             <button
               className="button"
@@ -1802,6 +1729,16 @@ function RivalsForCatan() {
           </div>
         </div>
       </div>
+
+      {/* Start Screen */}
+      {/* <StartScreen
+        gameStarted={gameStarted}
+        playerColor={playerColor}
+        turn={turn}
+        payState={payState}
+        startGame={startGame}
+      /> */}
+
       {gameStarted === false ? (
         <div className={`main-menu`}>
           <button
@@ -1819,28 +1756,12 @@ function RivalsForCatan() {
         <div></div>
       )}
 
-      {gameWinner !== "" ? (
-        <div className={`main-menu`}>
-          <div className="menu-message">{`${gameWinner} Player Wins!`}</div>
-          <button
-            className="menu-button"
-            onClick={() => {
-              if (playerColor === turn && payState.possibleMoves.length === 0) {
-                // restart function
-              }
-            }}
-          >
-            Restart
-          </button>
-        </div>
-      ) : (
-        <div></div>
-      )}
-
-      {/* <div className={`main-menu`}>
-        <div className="menu-message">Blue Player Wins!</div>
-        <button className="menu-button">Restart</button>
-      </div> */}
+      <EndScreen
+        gameWinner={gameWinner}
+        playerColor={playerColor}
+        turn={turn}
+        payState={payState}
+      />
     </>
   )
 }
