@@ -242,6 +242,7 @@ interface RoomTracker {
 
 function RivalsForCatan() {
   const [gameStarted, setGameStarted] = useState<boolean>(false)
+  const [gameWinner, setGameWinner] = useState<string>("")
 
   const [playerColor, setPlayerColor] = useState<string>("")
 
@@ -552,6 +553,8 @@ function RivalsForCatan() {
       }
       return strengthAdvantage
     })
+
+    checkWin()
   }, [blueResources, redResources])
 
   useEffect(() => {
@@ -883,7 +886,24 @@ function RivalsForCatan() {
   }
 
   function checkWin() {
-    // console.log("strength", strengthAdvantage)
+    let blueVictoryPoints = blueResources.victoryPoints
+    let redVictoryPoints = redResources.victoryPoints
+
+    if (strengthAdvantage === "blue") blueVictoryPoints++
+    if (strengthAdvantage === "red") redVictoryPoints++
+
+    if (tradeAdvantage === "blue") blueVictoryPoints++
+    if (tradeAdvantage === "red") redVictoryPoints++
+
+    console.log(redVictoryPoints)
+
+    if (blueVictoryPoints >= 10) playerWins("blue")
+    if (redVictoryPoints >= 10) playerWins("red")
+  }
+
+  function playerWins(winner: string) {
+    const winnerCapitalized = winner.charAt(0).toUpperCase() + winner.slice(1)
+    setGameWinner(winnerCapitalized)
   }
 
   function selectPayResource(card: CardDefinition) {
@@ -1492,9 +1512,11 @@ function RivalsForCatan() {
                     className="circle"
                     style={{ backgroundImage: `url(${redIconArray[index]})` }}
                   ></div>
-                  <div
-                    className={`resource ${turn}`}
-                  >{`${redResources[resource]}`}</div>
+                  <div className={`resource ${turn}`}>{`${
+                    redResources[resource] +
+                    (strengthAdvantage === "red" ? 1 : 0) +
+                    (tradeAdvantage === "red" ? 1 : 0)
+                  }`}</div>
                 </div>
               )
             })}
@@ -1516,9 +1538,11 @@ function RivalsForCatan() {
                     className="circle"
                     style={{ backgroundImage: `url(${blueIconArray[index]})` }}
                   ></div>
-                  <div
-                    className={`resource ${turn}`}
-                  >{`${blueResources[resource]}`}</div>
+                  <div className={`resource ${turn}`}>{`${
+                    blueResources[resource] +
+                    (strengthAdvantage === "blue" ? 1 : 0) +
+                    (tradeAdvantage === "blue" ? 1 : 0)
+                  }`}</div>
                 </div>
               )
             })}
@@ -1789,6 +1813,24 @@ function RivalsForCatan() {
             }}
           >
             Start Game
+          </button>
+        </div>
+      ) : (
+        <div></div>
+      )}
+
+      {gameWinner !== "" ? (
+        <div className={`main-menu`}>
+          <div className="menu-message">{`${gameWinner} Player Wins!`}</div>
+          <button
+            className="menu-button"
+            onClick={() => {
+              if (playerColor === turn && payState.possibleMoves.length === 0) {
+                // restart function
+              }
+            }}
+          >
+            Restart
           </button>
         </div>
       ) : (
