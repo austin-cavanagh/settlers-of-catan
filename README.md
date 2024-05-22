@@ -4,7 +4,7 @@
 <br />
 <div align="center">
 
-  <h3 align="center">Chess</h3>
+  <h3 align="center">Settlers of Catan</h3>
 
 <a href="https://github.com/austin-cavanagh/chess/issues/new?assignees=&labels=&projects=&template=bug-report-%F0%9F%90%9D.md&title=">Report Bug</a>
 ·
@@ -16,16 +16,20 @@
 
 ## Overview
 
-![Screenshot displaying an overview of the solar system](/public/screenshots/chess-screenshot-1.png)
+![Screenshot displaying an overview of the solar system](/public/screenshots/catan-screenshot-1.png)
 
-Welcome to my chess application. As a chess enthusiast, I chose this project as my first major undertaking after learning React. While still in development, the application currently supports all piece movements, castling, en passant, and detects check and checkmate scenarios.
+Welcome to my Settlers of Catan application. It is inspired by the 2 player version of Catan, Rivals for Catan. First project using TypeScript and integrating a front and backend in an applicaiton.
+
+While still in development, the application currently supports playing and building cards, collecting recources, and the beginnings of multiplayer with web sockets using Socket.io
 
 <!-- BUILT WITH -->
 
 ## Built With
 
-![JavaScript](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Express](https://img.shields.io/badge/Express-FFD700?style=for-the-badge&logo=express&logoColor=black)
+![Socket.io](https://img.shields.io/badge/Socket.io-28c2a1?&style=for-the-badge&logo=Socket.io&logoColor=white)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-214ce5?style=for-the-badge&logo=css3&logoColor=white)
 
