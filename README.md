@@ -6,9 +6,9 @@
 
   <h3 align="center">Settlers of Catan</h3>
 
-<a href="https://github.com/austin-cavanagh/chess/issues/new?assignees=&labels=&projects=&template=bug-report-%F0%9F%90%9D.md&title=">Report Bug</a>
+<a href="https://github.com/austin-cavanagh/settlers-of-catan/issues/new?assignees=&labels=&projects=&template=bug-report-%F0%9F%90%9D.md&title=">Report Bug</a>
 ·
-<a href="https://github.com/austin-cavanagh/chess/issues/new?assignees=&labels=&projects=&template=feature-request-%F0%9F%9A%80.md&title=">Request Feature</a>
+<a href="https://github.com/austin-cavanagh/settlers-of-catan/issues/new?assignees=&labels=&projects=&template=feature-request-%F0%9F%9A%80.md&title=">Request Feature</a>
 
 </div>
 
@@ -18,9 +18,11 @@
 
 ![Screenshot displaying an overview of the solar system](/public/screenshots/catan-screenshot-1.png)
 
-Welcome to my Settlers of Catan application. It is inspired by the 2 player version of Catan, Rivals for Catan. First project using TypeScript and integrating a front and backend in an applicaiton.
+Welcome to my Settlers of Catan application, inspired by the 2-player version of Catan, Rivals for Catan. This was my first project using TypeScript and itegrating both frontend and backend technologies in a single application.
 
-While still in development, the application currently supports playing and building cards, collecting recources, and the beginnings of multiplayer with web sockets using Socket.io
+While still in development, the application currently supports key features such as playing and building cards, collecting resources, and initial multiplayer functionality using web sockets with Socket.io.
+
+Future plans for the application include enhancing the multiplayer features, improving the user interface, and adding additional game mechanics. Feel free to explore the project, report issues, or contribute to its ongoing development.
 
 <!-- BUILT WITH -->
 
@@ -59,14 +61,14 @@ To get a local copy up and running follow these simple steps.
    Begin by cloning the repository to your local machine:
 
    ```sh
-   git clone https://github.com/austin-cavanagh/chess.git
+   git clone https://github.com/austin-cavanagh/settlers-of-catan.git
    ```
 
 2. **Navigate to the project directory**
    Enter directory after cloning:
 
    ```sh
-   cd chess
+   cd settlers-of-catan
    ```
 
 3. **Install dependencies**
