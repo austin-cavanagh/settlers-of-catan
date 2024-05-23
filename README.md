@@ -18,7 +18,7 @@
 
 ![Screenshot displaying an overview of the solar system](/public/screenshots/catan-screenshot-1.png)
 
-Welcome to my Settlers of Catan application, inspired by the 2-player version of Catan, Rivals for Catan. This was my first project using TypeScript and itegrating both frontend and backend technologies in a single application.
+Welcome to my Settlers of Catan application, inspired by the 2-player version of Catan, Rivals for Catan. This was my first project using TypeScript and itegrating frontend and backend technologies in a single application.
 
 While still in development, the application currently supports key features such as playing and building cards, collecting resources, and initial multiplayer functionality using web sockets with Socket.io.
 
